@@ -1,0 +1,10 @@
+{
+  "name": "turbokeeper",
+  "version": "0.0.1",
+  "scripts": {
+    "postinstall": "npm install --prefix turbokeeperhd"
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
+}

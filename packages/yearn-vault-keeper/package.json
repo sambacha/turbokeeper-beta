@@ -1,0 +1,26 @@
+{
+  "name": "yearn-vault-keeper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/banteg/yearn-vault-keeper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/banteg/yearn-vault-keeper/issues"
+  },
+  "homepage": "https://github.com/banteg/yearn-vault-keeper#readme",
+  "devDependencies": {
+    "@openzeppelin/test-environment": "^0.1.6",
+    "@truffle/debug-utils": "^4.2.14",
+    "@truffle/hdwallet-provider": "^1.1.1",
+    "solidity-coverage": "^0.7.11",
+    "truffle": "^5.1.51"
+  }
+}
