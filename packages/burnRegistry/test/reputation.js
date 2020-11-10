@@ -2,7 +2,7 @@ const { expectRevert } = require("openzeppelin-test-helpers");
 
 const RelayerReputation = artifacts.require("RelayerReputation");
 
-contract("RelayerReputation", accounts => {
+contract("RelayerReputation", (accounts) => {
   let reputationContract;
   let forwarder = accounts[0];
 
@@ -14,7 +14,7 @@ contract("RelayerReputation", accounts => {
     it("fails: setting locator for address other than one's own", async () => {
       await expectRevert(
         reputationContract.setRelayerLocator(accounts[2], "foo", "bar", {
-          from: accounts[1]
+          from: accounts[1],
         }),
         "RelayerReputation: can only set the locator for self"
       );
@@ -22,7 +22,7 @@ contract("RelayerReputation", accounts => {
 
     it("sets locator properly", async () => {
       reputationContract.setRelayerLocator(accounts[1], "foo", "bar", {
-        from: accounts[1]
+        from: accounts[1],
       });
 
       let { locator, locatorType } = await reputationContract.relayerToLocator(
@@ -37,7 +37,7 @@ contract("RelayerReputation", accounts => {
     it("fails: can only update reputation from forwarder address", async () => {
       await expectRevert(
         reputationContract.updateReputation(accounts[3], 100, {
-          from: accounts[1]
+          from: accounts[1],
         }),
         "RelayerReputation: caller is not the forwarder"
       );

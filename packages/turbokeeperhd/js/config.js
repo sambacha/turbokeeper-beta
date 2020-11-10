@@ -7,7 +7,7 @@ const envVars = [
   "LOCAL_RPC_URL",
   "TURBOKEEPER_PRIVATE_KEY",
   "TURBOKEEPER_FEE", // default fee (in Wei) broadcast by this relayer
-  "TURBOKEEPER_MIN_TX_PROFIT" // minimum profit per tx (in Wei) to consider submitting it. should be notably higher
+  "TURBOKEEPER_MIN_TX_PROFIT", // minimum profit per tx (in Wei) to consider submitting it. should be notably higher
   // than TURBOKEEPER_FEE
 ];
 

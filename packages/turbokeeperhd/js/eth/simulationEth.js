@@ -28,7 +28,7 @@ const buildSimTx = async (forkedWeb3, to, data, value) => {
     gas: block.gasLimit,
     to,
     data,
-    value
+    value,
   };
 };
 
@@ -54,5 +54,5 @@ const simulateTx = async (network, to, data, value) => {
 };
 
 module.exports = {
-  simulateTx
+  simulateTx,
 };

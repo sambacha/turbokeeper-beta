@@ -13,7 +13,7 @@ function __setRelayers(_relayers, _locatorTypes, _burns) {
     const relayer = relayers[i];
     relayerToLocator[relayer] = {
       locator: String(relayer),
-      locatorType: _locatorTypes[i]
+      locatorType: _locatorTypes[i],
     };
 
     relayerToBurn[relayer] = _burns[i];
@@ -25,7 +25,7 @@ class Contract {
 
   async nextRelayer() {
     return {
-      toNumber: () => relayers.length + 1
+      toNumber: () => relayers.length + 1,
     };
   }
 

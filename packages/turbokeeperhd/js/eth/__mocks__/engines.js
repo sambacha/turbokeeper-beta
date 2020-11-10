@@ -11,10 +11,10 @@ const TEST_WEB3_TX = {
   to: "0x0000000000000000000000000000000000000001",
   data: "",
   value: 300,
-  gas: GAS_LIMIT
+  gas: GAS_LIMIT,
 };
 
-const createForkedWeb3 = network => {
+const createForkedWeb3 = (network) => {
   expect(network).toBe(TEST_NETWORK);
 
   let relayerAddress = relayerAccount.address;
@@ -23,7 +23,7 @@ const createForkedWeb3 = network => {
   balances[relayerAddress] = INIT_RELAYER_BALANCE;
 
   let ret = { eth: { accounts: {} } };
-  ret.eth.getBalance = address => {
+  ret.eth.getBalance = (address) => {
     if (address in balances) {
       return balances[address];
     } else {
@@ -36,7 +36,7 @@ const createForkedWeb3 = network => {
 
     return { rawTransaction: SIGNED };
   };
-  ret.eth.sendSignedTransaction = signedTx => {
+  ret.eth.sendSignedTransaction = (signedTx) => {
     expect(signedTx).toBe(SIGNED);
 
     const { to, value } = TEST_WEB3_TX;
@@ -47,7 +47,7 @@ const createForkedWeb3 = network => {
     }
     balances[to] += value;
   };
-  ret.eth.getBlock = b => {
+  ret.eth.getBlock = (b) => {
     expect(b).toBe("latest");
 
     return { gasLimit: GAS_LIMIT };
@@ -62,19 +62,19 @@ const TEST_ETHERS_TX = {
   to: "0x0000000000000000000000000000000000000001",
   data: "",
   value: 300,
-  from: relayerAccount.address
+  from: relayerAccount.address,
 };
 const NONCE = 2;
 const TEST_BLOCK_NUM = 23;
 const TEST_TX_HASH = "0x234";
 
-const getEthersProvider = network => {
+const getEthersProvider = (network) => {
   expect(network).toBe(TEST_NETWORK);
 
   return {
     getGasPrice: () => ethers.utils.bigNumberify(TEST_GAS_PRICE),
 
-    estimateGas: tx => {
+    estimateGas: (tx) => {
       expect(tx).toStrictEqual(TEST_ETHERS_TX);
 
       return ethers.utils.bigNumberify(TEST_GAS_ESTIMATE);
@@ -89,38 +89,38 @@ const getEthersProvider = network => {
 
     getBlockNumber: () => TEST_BLOCK_NUM,
 
-    getBlock: blockNum => {
+    getBlock: (blockNum) => {
       expect(blockNum).toBe(TEST_BLOCK_NUM);
       return { gasLimit: GAS_LIMIT };
     },
 
-    sendTransaction: signedTx => {
+    sendTransaction: (signedTx) => {
       expect(signedTx).toBe(SIGNED);
 
       return {
         hash: TEST_TX_HASH,
-        blockNumber: TEST_BLOCK_NUM
+        blockNumber: TEST_BLOCK_NUM,
       };
-    }
+    },
   };
 };
 
 const ETHERS_FULL_TX = Object.assign({}, TEST_ETHERS_TX, {
   nonce: NONCE,
   gasLimit: GAS_LIMIT,
-  gasPrice: ethers.utils.bigNumberify(TEST_GAS_PRICE)
+  gasPrice: ethers.utils.bigNumberify(TEST_GAS_PRICE),
 });
 delete ETHERS_FULL_TX.from;
 
-const getEthersWallet = network => {
+const getEthersWallet = (network) => {
   expect(network).toBe(TEST_NETWORK);
 
   return {
-    sign: tx => {
+    sign: (tx) => {
       expect(tx).toStrictEqual(ETHERS_FULL_TX);
 
       return SIGNED;
-    }
+    },
   };
 };
 
@@ -140,5 +140,5 @@ module.exports = {
   TEST_GAS_ESTIMATE,
   TEST_GAS_PRICE,
   TEST_TX_HASH,
-  TEST_BLOCK_NUM
+  TEST_BLOCK_NUM,
 };

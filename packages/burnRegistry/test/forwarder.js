@@ -8,7 +8,7 @@ const TestApplication = artifacts.require("TestApplication");
 // TODO:
 // - test that can't call relayCall or burnRelayCall from another contract
 
-contract("RelayerForwarder", accounts => {
+contract("RelayerForwarder", (accounts) => {
   const nullAddress = "0x0000000000000000000000000000000000000000";
   const owner = accounts[0];
 
@@ -26,7 +26,7 @@ contract("RelayerForwarder", accounts => {
 
   beforeEach(async () => {
     forwarderContract = await RelayerForwarder.new(burnNum, burnDenom, {
-      from: owner
+      from: owner,
     });
 
     applicationContract = await TestApplication.new(applicationFee);
@@ -40,7 +40,7 @@ contract("RelayerForwarder", accounts => {
     it("fails: reputation not set", async () => {
       await expectRevert(
         forwarderContract.relayCall(applicationContract.address, feePayload, {
-          from: accounts[0]
+          from: accounts[0],
         }),
         "RelayerForwarder: reputation contract must be set to relay calls"
       );
@@ -54,7 +54,7 @@ contract("RelayerForwarder", accounts => {
           forwarderContract.address
         );
         await forwarderContract.setReputation(reputationContract.address, {
-          from: owner
+          from: owner,
         });
       });
 
@@ -131,7 +131,7 @@ contract("RelayerForwarder", accounts => {
         forwarderContract.address
       );
       await forwarderContract.setReputation(reputationContract.address, {
-        from: owner
+        from: owner,
       });
 
       let applicationContract2 = await TestApplication.new(applicationFee);
@@ -172,7 +172,7 @@ contract("RelayerForwarder", accounts => {
         forwarderContract.address
       );
       await forwarderContract.setReputation(reputationContract.address, {
-        from: owner
+        from: owner,
       });
 
       await forwarderContract.relayCall(

@@ -2,7 +2,7 @@ const { expectRevert } = require("openzeppelin-test-helpers");
 
 const ERC20RelayerReputation = artifacts.require("ERC20RelayerReputation");
 
-contract("ERC20RelayerReputation", accounts => {
+contract("ERC20RelayerReputation", (accounts) => {
   let reputationContract;
   let forwarder = accounts[0];
   let relayer = accounts[3];
@@ -26,7 +26,7 @@ contract("ERC20RelayerReputation", accounts => {
     it("fails: can only update reputation from forwarder address", async () => {
       await expectRevert(
         reputationContract.updateReputation(relayer, erc20, 100, {
-          from: accounts[1]
+          from: accounts[1],
         }),
         "ERC20RelayerReputation: caller is not the forwarder"
       );
@@ -34,7 +34,7 @@ contract("ERC20RelayerReputation", accounts => {
 
     it("stores reputation by relayer/token pair", async () => {
       await reputationContract.updateReputation(relayer, erc20, 100, {
-        from: forwarder
+        from: forwarder,
       });
 
       const nextRelayer = await reputationContract.nextRelayer();

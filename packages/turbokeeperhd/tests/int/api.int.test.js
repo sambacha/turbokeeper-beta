@@ -39,18 +39,15 @@ describe("/submit_tx", () => {
       TEST_GAS_ESTIMATE,
       TEST_GAS_PRICE,
       TEST_TX_HASH,
-      TEST_BLOCK_NUM
+      TEST_BLOCK_NUM,
     } = require(`${SRC_PATH}/eth/engines`);
 
-    const response = await request(app)
-      .post("/submit_tx")
-      .type("json")
-      .send({
-        to: TEST_ETHERS_TX.to,
-        data: TEST_ETHERS_TX.data,
-        value: TEST_ETHERS_TX.value,
-        network: TEST_NETWORK
-      });
+    const response = await request(app).post("/submit_tx").type("json").send({
+      to: TEST_ETHERS_TX.to,
+      data: TEST_ETHERS_TX.data,
+      value: TEST_ETHERS_TX.value,
+      network: TEST_NETWORK,
+    });
 
     expect(response.statusCode).toBe(200);
     expect(response.body["txHash"]).toBe(TEST_TX_HASH);
@@ -62,14 +59,12 @@ describe("/submit_tx", () => {
     const { TEST_ETHERS_TX, TEST_NETWORK } = require(`${SRC_PATH}/eth/engines`);
 
     const invalidRecipient = "0x0000000000000000000000000000000000000002";
-    const response = await request(app)
-      .get("/fee")
-      .query({
-        to: invalidRecipient,
-        data: TEST_ETHERS_TX.data,
-        value: TEST_ETHERS_TX.value,
-        network: TEST_NETWORK
-      });
+    const response = await request(app).get("/fee").query({
+      to: invalidRecipient,
+      data: TEST_ETHERS_TX.data,
+      value: TEST_ETHERS_TX.value,
+      network: TEST_NETWORK,
+    });
 
     expect(response.statusCode).toBe(403);
     expect(response.body["msg"]).toBe(

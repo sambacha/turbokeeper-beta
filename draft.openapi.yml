@@ -1,0 +1,5306 @@
+openapi: 3.0.1
+info:
+  title: TurboKeeper Yearn Light Client RPC
+  description: A REST interface for state queries, transaction generation and broadcasting.
+  version: "3.0"
+servers:
+  - url: https://yifidev.io
+tags:
+  - name: Transactions
+    description: Search, encode, or broadcast transactions.
+  - name: Besu RPC
+    description: Besu APIs, such as query blocks, transactions and validatorset
+  - name: CDP
+    description: CDP module APIs
+  - name: Auction
+    description: Auction module APIs
+  - name: BEP3
+    description: BEP3 module APIs
+  - name: Incentive
+    description: Incentive module APIs
+  - name: Pricefeed
+    description: Auction module APIs
+  - name: Harvest
+    description: Harvest module APIs
+  - name: Keeper
+    description: Keeper module APIs
+  - name: Auth
+    description: Authenticate accounts
+  - name: Bank
+    description: Create and broadcast transactions
+  - name: Staking
+    description: Stake module APIs
+  - name: Governance
+    description: Governance module APIs
+  - name: Keeper
+    description: Keeper module APIs
+  - name: Distribution
+    description: Fee distribution module APIs
+  - name: Supply
+    description: Supply module APIs
+  - name: Mint
+    description: Minting module APIs
+  - name: Distribution
+    description: Distribution module APIs
+  - name: Issuance
+    description: Issuance module APIs
+  - name: Misc
+    description: Query app version
+paths:
+  /node_info:
+    get:
+      tags:
+        - Besu RPC
+      summary: The properties of the connected node
+      description: Information about the connected node
+      responses:
+        200:
+          description: Node status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  application_version:
+                    type: object
+                    properties:
+                      build_tags:
+                        type: string
+                      client_name:
+                        type: string
+                      commit:
+                        type: string
+                      go:
+                        type: string
+                      name:
+                        type: string
+                      server_name:
+                        type: string
+                      version:
+                        type: string
+                  node_info:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      moniker:
+                        type: string
+                        example: validator-name
+                      protocol_version:
+                        type: object
+                        properties:
+                          p2p:
+                            type: string
+                            example: "7"
+                          block:
+                            type: string
+                            example: "10"
+                          app:
+                            type: string
+                            example: "0"
+                      network:
+                        type: string
+                        example: Yearn-2
+                      channels:
+                        type: string
+                      listen_addr:
+                        type: string
+                        example: 192.168.56.1:26656
+                      version:
+                        type: string
+                        description: Besu version
+                        example: 0.15.0
+                      other:
+                        type: object
+                        properties:
+                          tx_index:
+                            type: string
+                            example: "true"
+                          rpc_address:
+                            type: string
+                            example: tcp://0.0.0.0:26657
+                        description: more information on versions
+        500:
+          description: Failed to query node status
+          content: {}
+  /syncing:
+    get:
+      tags:
+        - Besu RPC
+      summary: Syncing state of node
+      description: Get the syncing status of the node
+      responses:
+        200:
+          description: Node syncing status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  syncing:
+                    type: boolean
+        500:
+          description: Server internal error
+          content: {}
+  /blocks/latest:
+    get:
+      tags:
+        - Besu RPC
+      summary: Get the latest block
+      responses:
+        200:
+          description: The latest block
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockQuery"
+        500:
+          description: Server internal error
+          content: {}
+  /blocks/{height}:
+    get:
+      tags:
+        - Besu RPC
+      summary: Get a block at a certain height
+      parameters:
+        - name: height
+          in: path
+          description: Block height
+          required: true
+          schema:
+            type: number
+          example: 1
+      responses:
+        200:
+          description: The block at a specific height
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockQuery"
+        400:
+          description: Invalid height
+          content: {}
+        404:
+          description: Request block height doesn't
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+  /validatorsets/latest:
+    get:
+      tags:
+        - Besu RPC
+      summary: Get the latest validator set
+      responses:
+        200:
+          description: The validator set at the latest block height
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  block_height:
+                    type: string
+                  validators:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BesuValidator"
+        500:
+          description: Server internal error
+          content: {}
+  /validatorsets/{height}:
+    get:
+      tags:
+        - Besu RPC
+      summary: Get a validator set a certain height
+      parameters:
+        - name: height
+          in: path
+          description: Block height
+          required: true
+          schema:
+            type: number
+          example: 1
+      responses:
+        200:
+          description: The validator set at a specific block height
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  block_height:
+                    type: string
+                  validators:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BesuValidator"
+        400:
+          description: Invalid height
+          content: {}
+        404:
+          description: Block at height not available
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+  /txs/{hash}:
+    get:
+      tags:
+        - Transactions
+      summary: Get a Tx by hash
+      description: Retrieve a transaction using its hash.
+      parameters:
+        - name: hash
+          in: path
+          description: Tx hash
+          required: true
+          schema:
+            type: string
+          example: FFC8D0E5D52D330AD315E950E5C18A9D65FC640156B9A95B5AEF07DDAE32E61D
+      responses:
+        200:
+          description: Tx with the provided hash
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TxQuery"
+        500:
+          description: Internal Server Error
+          content: {}
+  /txs:
+    get:
+      tags:
+        - Transactions
+      summary: Search transactions
+      description: Search transactions by events.
+      parameters:
+        - name: message.action
+          in: query
+          description:
+            "transaction events such as 'message.action=send' which results
+            in the following endpoint: 'GET /txs?message.action=send'. note that each
+            module documents its own events. look for xx_events.md in the corresponding
+            ethereum/docs/spec directory"
+          schema:
+            type: string
+          example: send
+        - name: message.sender
+          in: query
+          description: "transaction tags with sender: 'GET /txs?message.action=send&message.sender=Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9'"
+          schema:
+            type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          description: Maximum number of items per page
+          schema:
+            type: integer
+          example: 1
+        - name: txheight
+          in: query
+          description: Transaction height
+          schema:
+            type: integer
+          example: 1
+      responses:
+        200:
+          description: All txs matching the provided events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedQueryTxs"
+        400:
+          description: Invalid search events
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Transactions
+      summary: Broadcast a signed tx
+      description: Broadcast a signed tx to a full node
+      requestBody:
+        description:
+          The tx must be a signed eipTx. The supported broadcast modes
+          include `"block"`(return after tx commit), `"sync"`(return afer CheckTx)
+          and `"async"`(return right away).
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tx:
+                  $ref: "#/components/schemas/PosteipTx"
+                mode:
+                  type: string
+                  example: block
+        required: true
+      responses:
+        200:
+          description: Tx broadcasting result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: txBroadcast
+  /txs/encode:
+    post:
+      tags:
+        - Transactions
+      summary: Encode a transaction to the Amino wire format
+      description:
+        Encode a transaction (signed or not) from JSON to base64-encoded
+        Amino serialized bytes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EncodeTx"
+        required: true
+      responses:
+        200:
+          description: The tx was successfully decoded and re-encoded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tx:
+                    type: string
+                    example: The base64-encoded Amino-serialized bytes for the tx
+        400:
+          description: The tx was malformatted
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: EncodeBody
+  /txs/decode:
+    post:
+      tags:
+        - Transactions
+      summary: Decode a transaction from the Amino wire format
+      description:
+        Decode a transaction (signed or not) from base64-encoded Amino
+        serialized bytes to JSON
+      requestBody:
+        description: The tx to decode
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tx:
+                  type: string
+                  example: ogEoKBapCjyoo2GaChRKWendsRagTF1ACC1nxzjVxW3xJBIU/A6hCReBn5NYI6K2dl10kCEeTfgaCgoFc3Rha2USATESEAoKCgVzdGFrZRIBMRDAmgwaQhJAdlC1HbNw+ux6lRrK3mNdmaH62NE3ThD8SswlDcnhFex7pKSNhaxE4m6TgDhosoK6EyU0LnOZKutXKECNSvO+WCIIdGVzdG1lbW8=
+        required: true
+      responses:
+        200:
+          description: The tx was successfully decoded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: The tx was malformated
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: tx
+  /cdp:
+    post:
+      tags:
+        - CDP
+      summary: Create a cdp transaction
+      requestBody:
+        description: create cdp post parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                owner:
+                  $ref: "#/components/schemas/Address"
+                collateral:
+                  $ref: "#/components/schemas/ERCCollateral"
+                principal:
+                  $ref: "#/components/schemas/ERCPrincipal"
+                collateral_type:
+                  $ref: "#/components/schemas/CollateralType"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: post_cdp_req
+  /cdp/{owner}/{collateral-type}/deposits:
+    post:
+      tags:
+        - CDP
+      summary: Create a deposit to cdp transaction
+      parameters:
+        - name: owner
+          in: path
+          description: Owner address in keccak format
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: collateral_type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+      requestBody:
+        description: deposit cdp post parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                owner:
+                  $ref: "#/components/schemas/Address"
+                depositor:
+                  $ref: "#/components/schemas/Address"
+                collateral:
+                  $ref: "#/components/schemas/ERCCollateral"
+                collateral_type:
+                  $ref: "#/components/schemas/CollateralType"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: post_deposit_req
+  /cdp/{owner}/{collateral-type}/withdraw:
+    post:
+      tags:
+        - CDP
+      summary: create a withdraw collateral transaction
+      parameters:
+        - name: owner
+          in: path
+          description: Owner address in keccak format
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: collateral_type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+      requestBody:
+        description: withdraw cdp post parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                owner:
+                  $ref: "#/components/schemas/Address"
+                depositor:
+                  $ref: "#/components/schemas/Address"
+                collateral:
+                  $ref: "#/components/schemas/ERCCollateral"
+                collateral_type:
+                  $ref: "#/components/schemas/CollateralType"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: post_withdraw_req
+  /cdp/{owner}/{collateral-type}/draw:
+    post:
+      tags:
+        - CDP
+      summary: Create a draw debt transaction
+      parameters:
+        - name: owner
+          in: path
+          description: Owner address in keccak format
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: collateral_type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+      requestBody:
+        description: draw cdp post parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                owner:
+                  $ref: "#/components/schemas/Address"
+                principal:
+                  $ref: "#/components/schemas/ERCPrincipal"
+                collateral_type:
+                  $ref: "#/components/schemas/CollateralType"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: post_draw_req
+  /cdp/{owner}/{collateral-type}/repay:
+    post:
+      tags:
+        - CDP
+      summary: Repay debt from a CDP
+      parameters:
+        - name: owner
+          in: path
+          description: Owner address in keccak format
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: collateral_type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+      requestBody:
+        description: repay cdp post parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                owner:
+                  $ref: "#/components/schemas/Address"
+                payment:
+                  $ref: "#/components/schemas/ERCPrincipal"
+                collateral_type:
+                  $ref: "#/components/schemas/CollateralType"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: post_repay_req
+  /cdp/accounts:
+    get:
+      tags:
+        - CDP
+      summary: Get the cdp module accounts
+      responses:
+        200:
+          description: The cdp module accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        account_number:
+                          type: number
+                        address:
+                          $ref: "#/components/schemas/Address"
+                        ERCs:
+                          type: array
+                          items:
+                            $ref: "#/components/schemas/ERC"
+                        name:
+                          type: string
+                        permissions:
+                          type: array
+                          items:
+                            type: string
+                        public_key:
+                          $ref: "#/components/schemas/PublicKey"
+                        sequence:
+                          type: number
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/parameters:
+    get:
+      tags:
+        - CDP
+      summary: Get the parameters of the cdp module
+      responses:
+        200:
+          description: The parameters of the cdp module
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  collateral_params:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CollateralParam"
+                  debt_params:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DebtParam"
+                  global_debt_limit:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ERCCollateral"
+                  surplus_auction_threshold:
+                    type: string
+                    example: "1000000000"
+                  surplus_auction_lot:
+                    type: string
+                    example: "10000000"
+                  debt_auction_threshold:
+                    type: string
+                    example: "1000000000"
+                  savings_distribution_frequency:
+                    type: string
+                    example: "60000000"
+                  circuit_breaker:
+                    type: boolean
+                    example: false
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/cdps/cdp/{owner}/{collateral-type}:
+    get:
+      tags:
+        - CDP
+      summary:
+        Get the cdp associated with the input owner address and collateral
+        type
+      parameters:
+        - name: owner
+          in: path
+          description: Owner address in keccak format
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+      responses:
+        200:
+          description: CDP associated with owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CdpResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/cdps/collateralType/{collateral-type}:
+    get:
+      tags:
+        - CDP
+      summary: Get all cdps with collateral type equal to the input collateral type
+      parameters:
+        - name: type
+          in: path
+          description: Collateral Type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+      responses:
+        200:
+          description: All CDPs with the input collateral type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/CdpResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/cdps/ratio/{collateral-type}/{ratio}:
+    get:
+      tags:
+        - CDP
+      summary:
+        Get all cdps with collateral type equal to the input collateral type
+        and collateralization ratio strictly less than the input ratio
+      parameters:
+        - name: type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+        - name: ratio
+          in: path
+          description: Collateralization ratio
+          required: true
+          schema:
+            type: string
+          example: "2.0"
+      responses:
+        200:
+          description:
+            All CDPs with the input collateral type and collateralization
+            ratio less than the input ratio
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/CdpResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/cdps/cdp/deposits/{owner}/{collateral-type}:
+    get:
+      tags:
+        - CDP
+      summary:
+        Get the deposits associated with the cdp owned by an address for a
+        collateral type
+      parameters:
+        - name: owner
+          in: path
+          description: Owner address in keccak format
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: xrpb-a
+      responses:
+        200:
+          description: Deposits associated with the cdp
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CdpDepositResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/savingsRateDist:
+    get:
+      tags:
+        - CDP
+      summary: Get the total savings rate distributed by the cdp module
+      responses:
+        200:
+          description: The distributed savings rate
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/savingsRateDistTime:
+    get:
+      tags:
+        - CDP
+      summary: Get the most recent savings rate distribution time
+      responses:
+        200:
+          description: The most recent savings rate distribution time
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+  /cdp/cdps:
+    get:
+      tags:
+        - CDP
+      summary: Query all active cdps
+      parameters:
+        - name: owner
+          in: query
+          description: Owner address in keccak format
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: collateral-type
+          in: query
+          description: Collateral type
+          schema:
+            type: string
+          example: xrpb-a
+        - name: id
+          in: query
+          description: CDP ID
+          schema:
+            type: string
+          example: "4"
+        - name: ratio
+          in: query
+          description: Collateralization ratio
+          schema:
+            type: string
+          example: "2.75"
+  /bep3/swap/create:
+    post:
+      tags:
+        - BEP3
+      summary: Generate a create atomic swap transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                from:
+                  $ref: "#/components/schemas/Address"
+                to:
+                  $ref: "#/components/schemas/Address"
+                recipient_other_chain:
+                  $ref: "#/components/schemas/BinanceChainAddress"
+                sender_other_chain:
+                  $ref: "#/components/schemas/BinanceChainAddress2"
+                random_number_hash:
+                  $ref: "#/components/schemas/RandomNumberHash"
+                timestamp:
+                  $ref: "#/components/schemas/Timestamp"
+                height_span:
+                  $ref: "#/components/schemas/HeightSpan"
+                cross_chain:
+                  $ref: "#/components/schemas/CrossChain"
+        required: false
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Create atomic swap request body
+  /bep3/swap/claim:
+    post:
+      tags:
+        - BEP3
+      summary: Generate a claim atomic swap transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                from:
+                  $ref: "#/components/schemas/Address"
+                swap_id:
+                  type: string
+                  example: 3ca20f0152f03b0aabe73e7aa1ddf78b9048ede5a9a73846e1ef53bebbfa4185
+                random_number:
+                  type: string
+                  example: e3d0a98b459f72231da69c3bd771c1e721fef4be83c14b80dc805ba71019eebe
+        required: false
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Create atomic swap request body
+  /bep3/swap/refund:
+    post:
+      tags:
+        - BEP3
+      summary: Generate a refund atomic swap transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                from:
+                  $ref: "#/components/schemas/Address"
+                swap_id:
+                  type: string
+                  example: 1b00244021ec239867e5b8c44bcd98e40f3148806a8c0a8fd3418872986becba
+        required: false
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Create atomic swap request body
+  /bep3/swap/{swap-id}:
+    get:
+      tags:
+        - BEP3
+      summary: Get the atomic swap object associated with the input swap ID
+      parameters:
+        - name: swap-id
+          in: path
+          description: the swap ID
+          required: true
+          schema:
+            type: string
+          example: 1b00244021ec239867e5b8c44bcd98e40f3148806a8c0a8fd3418872986becba
+      responses:
+        200:
+          description: Atomic swap
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "548883"
+                  result:
+                    $ref: "#/components/schemas/AtomicSwapResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /bep3/swaps:
+    get:
+      tags:
+        - BEP3
+      summary: Get all atomic swaps
+      responses:
+        200:
+          description: All atomic swaps
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/AtomicSwapResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /bep3/supply/{denom}:
+    get:
+      tags:
+        - BEP3
+      summary: Get the asset supply for the input denom
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          schema:
+            type: string
+          example: bnb
+      responses:
+        200:
+          description: Asset supply
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    $ref: "#/components/schemas/AssetSupplyResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /bep3/parameters:
+    get:
+      tags:
+        - BEP3
+      summary: Get the current parameters of the BEP3 module
+      responses:
+        200:
+          description: BEP3 module parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "548883"
+                  result:
+                    $ref: "#/components/schemas/Bep3ParamsResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /auction/auctions/{id}/bids:
+    post:
+      tags:
+        - Auction
+      summary: Generate a place bid transaction
+      parameters:
+        - name: id
+          in: path
+          description: Auction id
+          required: true
+          schema:
+            type: string
+          example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                amount:
+                  $ref: "#/components/schemas/ERCBid"
+        required: false
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Auction bid request body
+  /auction/parameters:
+    get:
+      tags:
+        - Auction
+      summary: Query auction parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuctionParameters"
+        500:
+          description: Internal Server Error
+          content: {}
+  /auction/auctions:
+    get:
+      tags:
+        - Auction
+      summary: Query auctions
+      description: Query all ongoing auctions
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AuctionResponse"
+        500:
+          description: Internal Server Error
+          content: {}
+  /auction/auctions/{id}:
+    get:
+      tags:
+        - Auction
+      summary: Query auction
+      description: Query auction by id
+      parameters:
+        - name: id
+          in: path
+          description: Auction id
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuctionResponse"
+        400:
+          description: invalid auction id
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /pricefeed/postprice:
+    post:
+      tags:
+        - Pricefeed
+      summary: Generate post price transaction
+      requestBody:
+        description: post price request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                market_id:
+                  type: string
+                  example: xrp:usd
+                price:
+                  type: string
+                  example: "0.298464000000000007"
+                expiry:
+                  type: string
+                  example: "158551630291"
+        required: true
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: post_price_req
+  /pricefeed/parameters:
+    get:
+      tags:
+        - Pricefeed
+      summary: Query pricefeed parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PricefeedParameters"
+        500:
+          description: Internal Server Error
+          content: {}
+  /pricefeed/markets:
+    get:
+      tags:
+        - Pricefeed
+      summary: Query markets in the pricefeed
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Market"
+        500:
+          description: Internal Server Error
+          content: {}
+  /pricefeed/oracles/{market_id}:
+    get:
+      tags:
+        - Pricefeed
+      summary: Query markets in the pricefeed
+      parameters:
+        - name: market_id
+          in: path
+          description: the market id of the market
+          required: true
+          schema:
+            type: string
+          example: xrp:usd
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Address"
+        500:
+          description: Internal Server Error
+          content: {}
+  /pricefeed/rawprices/{market_id}:
+    get:
+      tags:
+        - Pricefeed
+      summary: Query markets in the pricefeed
+      parameters:
+        - name: market_id
+          in: path
+          description: the market id of the market
+          required: true
+          schema:
+            type: string
+          example: xrp:usd
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PostedPrice"
+        500:
+          description: Internal Server Error
+          content: {}
+  /pricefeed/price/{market_id}:
+    get:
+      tags:
+        - Pricefeed
+      summary: Query markets in the pricefeed
+      parameters:
+        - name: market_id
+          in: path
+          description: the market id of the market
+          required: true
+          schema:
+            type: string
+          example: xrp:usd
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Price"
+        500:
+          description: Internal Server Error
+          content: {}
+  /incentive/claim:
+    post:
+      tags:
+        - Incentive
+      summary: Claim USDX incentive rewards
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                owner:
+                  $ref: "#/components/schemas/Address"
+                type:
+                  type: string
+                  example: bnb
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Incentive claim body
+  /incentive/claims/{owner}/{collateral-type}:
+    get:
+      tags:
+        - Incentive
+      summary: Get outstanding claims for the input owner and collateral type
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: type
+          in: path
+          description: Collateral type
+          required: true
+          schema:
+            type: string
+          example: bnb-a
+      responses:
+        200:
+          description: USDX Incentive Claims
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/ClaimResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /incentive/parameters:
+    get:
+      tags:
+        - Incentive
+      summary: Get the current parameters of the incentive module
+      responses:
+        200:
+          description: USDX Incentive Claims
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/IncentiveParams"
+        500:
+          description: Server internal error
+          content: {}
+  /keeper/keepers/{keeper-id}/proposals:
+    get:
+      tags:
+        - Keeper
+      summary: Query proposals
+      description: Query all proposals for a keeper
+      parameters:
+        - name: keeper-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      responses:
+        200:
+          description: Keeper governance proposals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/KeeperProposal"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Keeper
+      summary: Create a new proposal for a keeper
+      parameters:
+        - name: keeper-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                pub_proposal:
+                  $ref: "#/components/schemas/PubProposal"
+                proposer:
+                  $ref: "#/components/schemas/Address"
+        required: false
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: proposal request body
+  /keeper/proposals/{proposal-id}/votes:
+    get:
+      tags:
+        - Keeper
+      summary: Query proposal votes
+      description: Query proposal votes by proposal ID
+      parameters:
+        - name: proposal-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      responses:
+        200:
+          description: Votes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/KeeperVote"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Keeper
+      summary: Create a new vote for a proposal
+      parameters:
+        - name: proposal-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                voter:
+                  $ref: "#/components/schemas/Address"
+        required: false
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: proposal request body
+  /keeper/keepers:
+    get:
+      tags:
+        - Keeper
+      summary: Query keepers
+      description: Query all keepers
+      responses:
+        200:
+          description: Keepers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Keeper"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /keeper/keepers/{keeper-id}:
+    get:
+      tags:
+        - Keeper
+      summary: Query keeper
+      description: Query keeper by ID
+      parameters:
+        - name: keeper-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      responses:
+        200:
+          description: Keeper
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    $ref: "#/components/schemas/Keeper"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /keeper/proposals/{proposal-id}:
+    get:
+      tags:
+        - Keeper
+      summary: Query proposal
+      description: Query proposal by ID
+      parameters:
+        - name: proposal-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      responses:
+        200:
+          description: Proposal
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    $ref: "#/components/schemas/KeeperProposal"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /keeper/proposals/{proposal-id}/propser:
+    get:
+      tags:
+        - Keeper
+      summary: Query proposer
+      description: Query proposer by proposal ID
+      parameters:
+        - name: proposal-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      responses:
+        200:
+          description: Proposer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    $ref: "#/components/schemas/Proposer"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /keeper/proposals/{proposal-id}/tally:
+    get:
+      tags:
+        - Keeper
+      summary: Query proposal tally
+      description: Query proposal tally by proposal ID
+      parameters:
+        - name: proposal-id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 1
+      responses:
+        200:
+          description: Vote tally
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: string
+                    example: "3"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /harvest/deposit:
+    post:
+      tags:
+        - Harvest
+      summary: Deposit funds to harvest liquidity pool
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                depositor:
+                  $ref: "#/components/schemas/Address"
+                amount:
+                  $ref: "#/components/schemas/ERC"
+                deposit_type:
+                  type: string
+                  example: lp
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: harvest deposit body
+  /harvest/withdraw:
+    post:
+      tags:
+        - Harvest
+      summary: Withdraw funds from harvest liquidity pool
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                depositor:
+                  $ref: "#/components/schemas/Address"
+                amount:
+                  $ref: "#/components/schemas/ERC"
+                deposit_type:
+                  type: string
+                  example: lp
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: harvest withdraw body
+  /harvest/claim:
+    post:
+      tags:
+        - Harvest
+      summary: Claim rewards from harvest liquidity pool
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                sender:
+                  $ref: "#/components/schemas/Address"
+                receiver:
+                  $ref: "#/components/schemas/Address"
+                deposit_denom:
+                  type: string
+                  example: bnb
+                multiplier_name:
+                  type: string
+                  example: small
+                deposit_type:
+                  type: string
+                  example: lp
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: harvest claim body
+  /harvest/parameters:
+    get:
+      tags:
+        - Harvest
+      summary: Get the current parameters of the harvest module
+      responses:
+        200:
+          description: Harvest module parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/HarvestParams"
+        500:
+          description: Server internal error
+          content: {}
+  /harvest/accounts:
+    get:
+      tags:
+        - Harvest
+      summary: Get the harvest module accounts
+      responses:
+        200:
+          description: The harvest module accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        account_number:
+                          type: number
+                        address:
+                          $ref: "#/components/schemas/Address"
+                        ERCs:
+                          type: array
+                          items:
+                            $ref: "#/components/schemas/ERC"
+                        name:
+                          type: string
+                        permissions:
+                          type: array
+                          items:
+                            type: string
+                        public_key:
+                          $ref: "#/components/schemas/PublicKey"
+                        sequence:
+                          type: number
+        500:
+          description: Server internal error
+          content: {}
+  /harvest/deposits:
+    get:
+      tags:
+        - Harvest
+      summary: Get harvest deposits
+      parameters:
+        - name: deposit_denom
+          in: query
+          description: Deposit ERC denom
+          schema:
+            type: string
+          example: btc
+        - name: deposit_type
+          in: query
+          description: Deposit type
+          schema:
+            type: string
+          example: lp
+        - name: owner
+          in: query
+          description: Owner address in keccak format
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: page
+          in: query
+          description: The page number.
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          description: The maximum number of items per page.
+          schema:
+            type: integer
+          example: 100
+      responses:
+        200:
+          description: harvest deposits
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/HarvestDepositResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /harvest/claims:
+    get:
+      tags:
+        - Harvest
+      summary: Get outstanding harvest claims
+      parameters:
+        - name: deposit_denom
+          in: query
+          description: Deposit ERC denom
+          schema:
+            type: string
+          example: btc
+        - name: deposit_type
+          in: query
+          description: Deposit type
+          schema:
+            type: string
+          example: lp
+        - name: owner
+          in: query
+          description: Owner address in keccak format
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: page
+          in: query
+          description: The page number.
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          description: The maximum number of items per page.
+          schema:
+            type: integer
+          example: 100
+      responses:
+        200:
+          description: harvest claims
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/HarvestClaimResponse"
+        500:
+          description: Server internal error
+          content: {}
+  /issuance/issue:
+    post:
+      tags:
+        - Issuance
+      summary: Issue tokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                sender:
+                  $ref: "#/components/schemas/Address"
+                tokens:
+                  $ref: "#/components/schemas/ERC"
+                receiver:
+                  $ref: "#/components/schemas/Address"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Issue tokens body
+  /issuance/redeem:
+    post:
+      tags:
+        - Issuance
+      summary: Redeem tokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                sender:
+                  $ref: "#/components/schemas/Address"
+                tokens:
+                  $ref: "#/components/schemas/ERC"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Redeem tokens body
+  /issuance/block:
+    post:
+      tags:
+        - Issuance
+      summary: Block an address from using an issued token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                sender:
+                  $ref: "#/components/schemas/Address"
+                denom:
+                  type: string
+                  example: usdt
+                blocked_address:
+                  $ref: "#/components/schemas/Address"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Block address body
+  /issuance/unblock:
+    post:
+      tags:
+        - Issuance
+      summary: Unblock an address from using an issued token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                sender:
+                  $ref: "#/components/schemas/Address"
+                denom:
+                  type: string
+                  example: usdt
+                address:
+                  $ref: "#/components/schemas/Address"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Unblock address body
+  /issuance/pause:
+    post:
+      tags:
+        - Issuance
+      summary: Set an issued token's pause status
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                sender:
+                  $ref: "#/components/schemas/Address"
+                denom:
+                  type: string
+                  example: usdt
+                status:
+                  type: boolean
+                  example: true
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Internal server error
+          content: {}
+      x-codegen-request-body-name: Set pause status body
+  /issuance/parameters:
+    get:
+      tags:
+        - Issuance
+      summary: Get the current parameters of the Issuance module
+      responses:
+        200:
+          description: Issuance parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: "#/components/schemas/IssuanceParams"
+        500:
+          description: Server internal error
+          content: {}
+  /bank/balances/{address}:
+    get:
+      tags:
+        - Bank
+      summary: Get the account balances
+      parameters:
+        - name: address
+          in: path
+          description: Account address in keccak format
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+      responses:
+        200:
+          description: Account balances
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        500:
+          description: Server internal error
+          content: {}
+  /bank/accounts/{address}/transfers:
+    post:
+      tags:
+        - Bank
+      summary: Send ERCs from one account to another
+      parameters:
+        - name: address
+          in: path
+          description: Account address in keccak format
+          required: true
+          schema:
+            type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+      requestBody:
+        description: The sender and tx information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                amount:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ERC"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid request
+          content: {}
+        500:
+          description: Server internal error
+          content: {}
+      x-codegen-request-body-name: account
+  /auth/accounts/{address}:
+    get:
+      tags:
+        - Auth
+      summary: Get the account information on blockchain
+      parameters:
+        - name: address
+          in: path
+          description: Account address
+          required: true
+          schema:
+            type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+      responses:
+        200:
+          description: Account information on the blockchain
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  value:
+                    type: object
+                    properties:
+                      account_number:
+                        type: string
+                      address:
+                        type: string
+                      ERCs:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/ERC"
+                      public_key:
+                        $ref: "#/components/schemas/PublicKey"
+                      sequence:
+                        type: string
+        500:
+          description: Server internal error
+          content: {}
+  /staking/delegators/{delegatorAddr}/delegations:
+    get:
+      tags:
+        - Staking
+      summary: Get all delegations from a delegator
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        400:
+          description: Invalid delegator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/delegators/{delegatorAddr}/delegations/{validatorAddr}:
+    get:
+      tags:
+        - Staking
+      summary: Query the current delegation between a delegator and a validator
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Delegation"
+        400:
+          description: Invalid delegator address or validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/delegators/{delegatorAddr}/unbonding_delegations:
+    get:
+      tags:
+        - Staking
+      summary: Get all unbonding delegations from a delegator
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        400:
+          description: Invalid delegator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/delegators/{delegatorAddr}/unbonding_delegations/{validatorAddr}:
+    get:
+      tags:
+        - Staking
+      summary: Query all unbonding delegations between a delegator and a validator
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnbondingDelegationPair"
+        400:
+          description: Invalid delegator address or validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/redelegations:
+    get:
+      tags:
+        - Staking
+      summary: Get all redelegations (filter by query params)
+      parameters:
+        - name: delegator
+          in: query
+          description: keccak AccAddress of Delegator
+          schema:
+            type: string
+        - name: validator_from
+          in: query
+          description: keccak ValAddress of SrcValidator
+          schema:
+            type: string
+        - name: validator_to
+          in: query
+          description: keccak ValAddress of DstValidator
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/delegators/{delegatorAddr}/validators:
+    get:
+      tags:
+        - Staking
+      summary: Query all validators that a delegator is bonded to
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        400:
+          description: Invalid delegator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/delegators/{delegatorAddr}/validators/{validatorAddr}:
+    get:
+      tags:
+        - Staking
+      summary: Query a validator that a delegator is bonded to
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: validatorAddr
+          in: path
+          description: keccak ValAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Validator"
+        400:
+          description: Invalid delegator address or validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/validators:
+    get:
+      tags:
+        - Staking
+      summary:
+        Get all validator candidates. By default it returns only the bonded
+        validators.
+      parameters:
+        - name: status
+          in: query
+          description:
+            The validator bond status. Must be either 'bonded', 'unbonded',
+            or 'unbonding'.
+          schema:
+            type: string
+          example: bonded
+        - name: page
+          in: query
+          description: The page number.
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          description: The maximum number of items per page.
+          schema:
+            type: integer
+          example: 1
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/validators/{validatorAddr}:
+    get:
+      tags:
+        - Staking
+      summary: Query the information from a single validator
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Validator"
+        400:
+          description: Invalid validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/validators/{validatorAddr}/delegations:
+    get:
+      tags:
+        - Staking
+      summary: Get all delegations from a validator
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1q53rwutgpzx7szcrgzqguxyccjpzt9j44jzrtj
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        400:
+          description: Invalid validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/validators/{validatorAddr}/unbonding_delegations:
+    get:
+      tags:
+        - Staking
+      summary: Get all unbonding delegations from a validator
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1q53rwutgpzx7szcrgzqguxyccjpzt9j44jzrtj
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: object
+        400:
+          description: Invalid validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/pool:
+    get:
+      tags:
+        - Staking
+      summary: Get the current state of the staking pool
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loose_tokens:
+                    type: string
+                  bonded_tokens:
+                    type: string
+                  inflation_last_time:
+                    type: string
+                  inflation:
+                    type: string
+                  date_last_commission_reset:
+                    type: string
+                  prev_bonded_shares:
+                    type: string
+        500:
+          description: Internal Server Error
+          content: {}
+  /staking/parameters:
+    get:
+      tags:
+        - Staking
+      summary: Get the current staking parameter values
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inflation_rate_change:
+                    type: string
+                  inflation_max:
+                    type: string
+                  inflation_min:
+                    type: string
+                  goal_bonded:
+                    type: string
+                  unbonding_time:
+                    type: string
+                  max_validators:
+                    type: integer
+                  bond_denom:
+                    type: string
+        500:
+          description: Internal Server Error
+          content: {}
+  /Keeper/signing_infos:
+    get:
+      tags:
+        - Keeper
+      summary: Get sign info of given all validators
+      description: Get sign info of all validators
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: true
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          description: Maximum number of items per page
+          required: true
+          schema:
+            type: integer
+          example: 5
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        400:
+          description: Invalid validator public key for one of the validators
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /Keeper/validators/{validatorAddr}/unjail:
+    post:
+      tags:
+        - Keeper
+      summary: Unjail a jailed validator
+      description: Send transaction to unjail a jailed validator
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak validator address
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        400:
+          description: Invalid validator address or base_req
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: UnjailBody
+  /Keeper/parameters:
+    get:
+      tags:
+        - Keeper
+      summary: Get the current Keeper parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  max_evidence_age:
+                    type: string
+                  signed_blocks_window:
+                    type: string
+                  min_signed_per_window:
+                    type: string
+                  double_sign_unbond_duration:
+                    type: string
+                  downtime_unbond_duration:
+                    type: string
+                  slash_fraction_double_sign:
+                    type: string
+                  slash_fraction_downtime:
+                    type: string
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/proposals:
+    get:
+      tags:
+        - Governance
+      summary: Query proposals
+      description: Query proposals information with parameters
+      parameters:
+        - name: voter
+          in: query
+          description: voter address
+          schema:
+            type: string
+        - name: depositor
+          in: query
+          description: depositor address
+          schema:
+            type: string
+        - name: status
+          in: query
+          description:
+            proposal status, valid values can be `"deposit_period"`, `"voting_period"`,
+            `"passed"`, `"rejected"`
+          schema:
+            type: string
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TextProposal"
+        400:
+          description: Invalid query parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Governance
+      summary: Submit a proposal
+      description: Send transaction to submit a proposal
+      requestBody:
+        description:
+          valid value of `"proposal_type"` can be `"text"`, `"parameter_change"`,
+          `"software_upgrade"`
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                title:
+                  type: string
+                  example: Test_title
+                description:
+                  type: string
+                  example: my_test_description
+                proposal_type:
+                  type: string
+                  example: text
+                proposer:
+                  $ref: "#/components/schemas/Address"
+                initial_deposit:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ERC"
+        required: true
+      responses:
+        200:
+          description: Tx was successfully generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TextProposal"
+        400:
+          description: Invalid proposal body
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: post_proposal_body
+  /gov/proposals/param_change:
+    post:
+      tags:
+        - Governance
+      summary: Generate a parameter change proposal transaction
+      description: Generate a parameter change proposal transaction
+      requestBody:
+        description:
+          The parameter change proposal body that contains all parameter
+          changes
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                title:
+                  type: string
+                  example: Param_Change
+                description:
+                  type: string
+                  example: Update_max_validators
+                proposer:
+                  $ref: "#/components/schemas/Address"
+                deposit:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ERC"
+                changes:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ParamChange"
+        required: true
+      responses:
+        200:
+          description: The transaction was successfully generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/eipTx"
+        400:
+          description: Invalid proposal body
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: post_proposal_body
+  /gov/proposals/{proposalId}:
+    get:
+      tags:
+        - Governance
+      summary: Query a proposal
+      description: Query a proposal by id
+      parameters:
+        - name: proposalId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TextProposal"
+        400:
+          description: Invalid proposal id
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/proposals/{proposalId}/proposer:
+    get:
+      tags:
+        - Governance
+      summary: Query proposer
+      description: Query for the proposer for a proposal
+      parameters:
+        - name: proposalId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proposer"
+        400:
+          description: Invalid proposal ID
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/proposals/{proposalId}/deposits:
+    get:
+      tags:
+        - Governance
+      summary: Query deposits
+      description: Query deposits by proposalId
+      parameters:
+        - name: proposalId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Deposit"
+        400:
+          description: Invalid proposal id
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Governance
+      summary: Deposit tokens to a proposal
+      description: Send transaction to deposit tokens to a proposal
+      parameters:
+        - name: proposalId
+          in: path
+          description: proposal id
+          required: true
+          schema:
+            type: string
+          example: "1"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                depositor:
+                  $ref: "#/components/schemas/Address"
+                amount:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ERC"
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        400:
+          description: Invalid proposal id or deposit body
+          content: {}
+        401:
+          description: Key password is wrong
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: post_deposit_body
+  /gov/proposals/{proposalId}/deposits/{depositor}:
+    get:
+      tags:
+        - Governance
+      summary: Query deposit
+      description: Query deposit by proposalId and depositor address
+      parameters:
+        - name: proposalId
+          in: path
+          description: proposal id
+          required: true
+          schema:
+            type: string
+          example: "1"
+        - name: depositor
+          in: path
+          description: keccak depositor address
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Deposit"
+        400:
+          description: Invalid proposal id or depositor address
+          content: {}
+        404:
+          description: Found no deposit
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/proposals/{proposalId}/votes:
+    get:
+      tags:
+        - Governance
+      summary: Query voters
+      description: Query voters information by proposalId
+      parameters:
+        - name: proposalId
+          in: path
+          description: proposal id
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vote"
+        400:
+          description: Invalid proposal id
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Governance
+      summary: Vote a proposal
+      description: Send transaction to vote a proposal
+      parameters:
+        - name: proposalId
+          in: path
+          description: proposal id
+          required: true
+          schema:
+            type: string
+          example: "1"
+      requestBody:
+        description:
+          valid value of `"option"` field can be `"yes"`, `"no"`, `"no_with_veto"`
+          and `"abstain"`
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                voter:
+                  $ref: "#/components/schemas/Address"
+                option:
+                  type: string
+                  example: yes
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        400:
+          description: Invalid proposal id or vote body
+          content: {}
+        401:
+          description: Key password is wrong
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: post_vote_body
+  /gov/proposals/{proposalId}/votes/{voter}:
+    get:
+      tags:
+        - Governance
+      summary: Query vote
+      description: Query vote information by proposal Id and voter address
+      parameters:
+        - name: proposalId
+          in: path
+          description: proposal id
+          required: true
+          schema:
+            type: string
+          example: "1"
+        - name: voter
+          in: path
+          description: keccak voter address
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vote"
+        400:
+          description: Invalid proposal id or voter address
+          content: {}
+        404:
+          description: Found no vote
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/proposals/{proposalId}/tally:
+    get:
+      tags:
+        - Governance
+      summary: Get a proposal's tally result at the current time
+      description:
+        Gets a proposal's tally result at the current time. If the proposal
+        is pending deposits (i.e status 'DepositPeriod') it returns an empty tally
+        result.
+      parameters:
+        - name: proposalId
+          in: path
+          description: proposal id
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TallyResult"
+        400:
+          description: Invalid proposal id
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/parameters/deposit:
+    get:
+      tags:
+        - Governance
+      summary: Query governance deposit parameters
+      description:
+        Query governance deposit parameters. The max_deposit_period units
+        are in nanoseconds.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  min_deposit:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ERC"
+                  max_deposit_period:
+                    type: string
+                    example: "86400000000000"
+        400:
+          description: <other_path> is not a valid query request path
+          content: {}
+        404:
+          description: Found no deposit parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/parameters/tallying:
+    get:
+      tags:
+        - Governance
+      summary: Query governance tally parameters
+      description: Query governance tally parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        400:
+          description: <other_path> is not a valid query request path
+          content: {}
+        404:
+          description: Found no tally parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /gov/parameters/voting:
+    get:
+      tags:
+        - Governance
+      summary: Query governance voting parameters
+      description:
+        Query governance voting parameters. The voting_period units are
+        in nanoseconds.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        400:
+          description: <other_path> is not a valid query request path
+          content: {}
+        404:
+          description: Found no voting parameters
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /distribution/delegators/{delegatorAddr}/rewards:
+    get:
+      tags:
+        - Distribution
+      summary: Get the total rewards balance from all delegations
+      description:
+        Get the sum of all the rewards earned by delegations by a single
+        delegator
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    $ref: "#/components/schemas/DelegatorTotalRewards"
+        400:
+          description: Invalid delegator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Distribution
+      summary: Withdraw all the delegator's delegation rewards
+      description: Withdraw all the delegator's delegation rewards
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        400:
+          description: Invalid delegator address
+          content: {}
+        401:
+          description: Key password is wrong
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: Withdraw request body
+  /distribution/delegators/{delegatorAddr}/rewards/{validatorAddr}:
+    get:
+      tags:
+        - Distribution
+      summary: Query a delegation reward
+      description: Query a single delegation reward by a delegator
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ERC"
+        400:
+          description: Invalid delegator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Distribution
+      summary: Withdraw a delegation reward
+      description: Withdraw a delegator's delegation reward from a single validator
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        400:
+          description: Invalid delegator address or delegation body
+          content: {}
+        401:
+          description: Key password is wrong
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: Withdraw request body
+  /distribution/delegators/{delegatorAddr}/withdraw_address:
+    get:
+      tags:
+        - Distribution
+      summary: Get the rewards withdrawal address
+      description:
+        Get the delegations' rewards withdrawal address. This is the address
+        in which the user will receive the reward funds
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    $ref: "#/components/schemas/Address"
+        400:
+          description: Invalid delegator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Distribution
+      summary: Replace the rewards withdrawal address
+      description: Replace the delegations' rewards withdrawal address for a new one.
+      parameters:
+        - name: delegatorAddr
+          in: path
+          description: keccak AccAddress of Delegator
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+                withdraw_address:
+                  $ref: "#/components/schemas/Address"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        400:
+          description: Invalid delegator or withdraw address
+          content: {}
+        401:
+          description: Key password is wrong
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: Withdraw request body
+  /distribution/validators/{validatorAddr}:
+    get:
+      tags:
+        - Distribution
+      summary: Validator distribution information
+      description: Query the distribution information of a single validator
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorDistInfo"
+        400:
+          description: Invalid validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /distribution/validators/{validatorAddr}/outstanding_rewards:
+    get:
+      tags:
+        - Distribution
+      summary: Fee distribution outstanding rewards of a single validator
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ERC"
+        500:
+          description: Internal Server Error
+          content: {}
+  /distribution/validators/{validatorAddr}/rewards:
+    get:
+      tags:
+        - Distribution
+      summary: Commission and self-delegation rewards of a single validator
+      description: Query the commission and self-delegation rewards of validator.
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+          example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ERC"
+        400:
+          description: Invalid validator address
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+    post:
+      tags:
+        - Distribution
+      summary: Withdraw the validator's rewards
+      description: Withdraw the validator's self-delegation and commissions rewards
+      parameters:
+        - name: validatorAddr
+          in: path
+          description: keccak OperatorAddress of validator
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_req:
+                  $ref: "#/components/schemas/BaseReq"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastTxCommitResult"
+        400:
+          description: Invalid validator address
+          content: {}
+        401:
+          description: Key password is wrong
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+      x-codegen-request-body-name: Withdraw request body
+  /distribution/community_pool:
+    get:
+      tags:
+        - Distribution
+      summary: Community pool parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  height:
+                    type: string
+                    example: "100"
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ERC"
+        500:
+          description: Internal Server Error
+          content: {}
+  /distribution/parameters:
+    get:
+      tags:
+        - Distribution
+      summary: Fee distribution parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        500:
+          description: Internal Server Error
+          content: {}
+  /minting/parameters:
+    get:
+      tags:
+        - Mint
+      summary: Minting module parameters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        500:
+          description: Internal Server Error
+          content: {}
+  /minting/inflation:
+    get:
+      tags:
+        - Mint
+      summary: Current minting inflation value
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+        500:
+          description: Internal Server Error
+          content: {}
+  /minting/annual-provisions:
+    get:
+      tags:
+        - Mint
+      summary: Current minting annual provisions value
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+        500:
+          description: Internal Server Error
+          content: {}
+  /supply/total:
+    get:
+      tags:
+        - Supply
+      summary: Total supply of ERCs in the chain
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supply"
+        500:
+          description: Internal Server Error
+          content: {}
+  /supply/total/{denomination}:
+    get:
+      tags:
+        - Supply
+      summary: Total supply of a single ERC denomination
+      parameters:
+        - name: denomination
+          in: path
+          description: ERC denomination
+          required: true
+          schema:
+            type: string
+          example: uatom
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+        400:
+          description: Invalid ERC denomination
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+  /Distribution/parameters:
+    get:
+      tags:
+        - Distribution
+      summary: Get the current Distribution parameter values
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active:
+                    type: string
+                  periods:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DistributionPeriod"
+        500:
+          description: Internal Server Error
+          content: {}
+components:
+  schemas:
+    CheckTxResult:
+      type: object
+      properties:
+        code:
+          type: integer
+        data:
+          type: string
+        gas_used:
+          type: integer
+        gas_wanted:
+          type: integer
+        info:
+          type: string
+        log:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/KVPair"
+      example:
+        code: 0
+        data: data
+        log: log
+        gas_used: 5000
+        gas_wanted: 10000
+        info: info
+        tags:
+          - ""
+          - ""
+    DeliverTxResult:
+      type: object
+      properties:
+        code:
+          type: integer
+        data:
+          type: string
+        gas_used:
+          type: integer
+        gas_wanted:
+          type: integer
+        info:
+          type: string
+        log:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/KVPair"
+      example:
+        code: 5
+        data: data
+        log: log
+        gas_used: 5000
+        gas_wanted: 10000
+        info: info
+        tags:
+          - ""
+          - ""
+    BroadcastTxCommitResult:
+      type: object
+      properties:
+        check_tx:
+          $ref: "#/components/schemas/CheckTxResult"
+        deliver_tx:
+          $ref: "#/components/schemas/DeliverTxResult"
+        hash:
+          $ref: "#/components/schemas/Hash"
+        height:
+          type: string
+    KVPair:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    Msg:
+      type: object
+      properties:
+        type:
+          type: string
+          example: ethereum/MsgSend
+        value:
+          type: object
+          properties:
+            from_address:
+              type: string
+              example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+            to_address:
+              type: string
+              example: 0x000CF4bccDddF452d720a5B2978F54d03feCF633
+            amount:
+              type: array
+              items:
+                $ref: "#/components/schemas/ERC"
+    Address:
+      type: string
+      description: keccak encoded address
+      example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+    Address2:
+      type: string
+      description: keccak encoded address
+      example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+    BinanceChainAddress:
+      type: string
+      description: address on another chain (binance)
+      example: bnb1uky3me9ggqypmrsvxk7ur6hqkzq7zmv4ed4ng7
+    BinanceChainAddress2:
+      type: string
+      description: address on another chain (binance)
+      example: bnb10uypsspvl6jlxcx5xse02pag39l8xpe7a3468h
+    RandomNumberHash:
+      type: string
+      description: hex-encoded sha256 hash of a 64bit random number
+      example: c0544b7f4b890a673ea3f61bdb4650fbfe2f3e56bda1b397d6d592fca7163c8c
+    Timestamp:
+      type: string
+      description: unix timestamp
+      example: "1585252531"
+    HeightSpan:
+      type: string
+      description: span of blocks for which an atomic swap is valid
+      example: "3600"
+    DeputyAddress:
+      type: string
+      description: bep3 deputy
+      example: Yearn1xy7hrjy9r0algz9w3gzm8u6mrpq97kwta747gj
+    ValidatorAddress:
+      type: string
+      description: keccak encoded address
+      example: Yearnvaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0
+    ERC:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: uYearn
+        amount:
+          type: string
+          example: "50000"
+    ERCBNB:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: bnb
+        amount:
+          type: string
+          example: "555555"
+    CollateralType:
+      type: string
+      example: xrpb-a
+    ERCCollateral:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: xrp
+        amount:
+          type: string
+          example: "10000000000"
+    ERCPrincipal:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: usdx
+        amount:
+          type: string
+          example: "10000000"
+    ERCBid:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: usdx
+        amount:
+          type: string
+          example: "100000000"
+    Hash:
+      type: string
+      example: EE5F3404034C524501629B56E0DDC38FAD651F04
+    Signature:
+      type: object
+      properties:
+        signature:
+          type: string
+          example: W1HfKcc4F0rCSoxheZ7fsrB5nGK58U4gKysuzsmUwhloVnCxmbCx289uVMMvQN6tOcQsz7hMVTJrXSA1xzevvw==
+        pubkey:
+          type: object
+          properties:
+            type:
+              type: string
+              example: Besu/PubKeySecp256k1
+            value:
+              type: string
+              example: Agey31h/NYpcy0sYm4liHMrXJMzbQUrgV4uHd/w09CXN
+    TxQuery:
+      type: object
+      properties:
+        hash:
+          type: string
+          example: D085138D913993919295FF4B0A9107F1F2CDE0D37A87CE0644E217CBF3B49656
+        height:
+          type: string
+          example: "368"
+        tx:
+          $ref: "#/components/schemas/eipTx"
+        result:
+          type: object
+          properties:
+            log:
+              type: string
+            gas_wanted:
+              type: string
+              example: "200000"
+            gas_used:
+              type: string
+              example: "26354"
+            tags:
+              type: array
+              items:
+                $ref: "#/components/schemas/KVPair"
+    PaginatedQueryTxs:
+      type: object
+      properties:
+        total_count:
+          type: string
+          example: "1"
+        count:
+          type: string
+          example: "1"
+        page_number:
+          type: string
+          example: "1"
+        page_total:
+          type: string
+          example: "1"
+        limit:
+          type: string
+          example: "30"
+        txs:
+          type: array
+          items:
+            $ref: "#/components/schemas/TxQuery"
+    eipTx:
+      type: object
+      properties:
+        msg:
+          type: array
+          items:
+            $ref: "#/components/schemas/Msg"
+        fee:
+          type: object
+          properties:
+            gas:
+              type: string
+              example: "200000"
+            amount:
+              type: array
+              items:
+                $ref: "#/components/schemas/ERC"
+        memo:
+          type: string
+        signatures:
+          type: array
+          items:
+            $ref: "#/components/schemas/Signature"
+    BlockID:
+      type: object
+      properties:
+        hash:
+          $ref: "#/components/schemas/Hash"
+        parts:
+          type: object
+          properties:
+            total:
+              type: string
+              example: "0"
+            hash:
+              $ref: "#/components/schemas/Hash"
+    BlockHeader:
+      type: object
+      properties:
+        chain_id:
+          type: string
+          example: testing
+        height:
+          type: string
+          example: "1"
+        time:
+          type: string
+          example: 2017-12-30T05:53:09.287+01:00
+        num_txs:
+          type: string
+          example: "0"
+        last_block_id:
+          $ref: "#/components/schemas/BlockID"
+        total_txs:
+          type: string
+          example: "35"
+        last_commit_hash:
+          $ref: "#/components/schemas/Hash"
+        data_hash:
+          $ref: "#/components/schemas/Hash"
+        validators_hash:
+          $ref: "#/components/schemas/Hash"
+        next_validators_hash:
+          $ref: "#/components/schemas/Hash"
+        consensus_hash:
+          $ref: "#/components/schemas/Hash"
+        app_hash:
+          $ref: "#/components/schemas/Hash"
+        last_results_hash:
+          $ref: "#/components/schemas/Hash"
+        evidence_hash:
+          $ref: "#/components/schemas/Hash"
+        proposer_address:
+          $ref: "#/components/schemas/Address"
+        version:
+          type: object
+          properties:
+            block:
+              type: string
+              example: "10"
+            app:
+              type: string
+              example: "0"
+    Block:
+      type: object
+      properties:
+        header:
+          $ref: "#/components/schemas/BlockHeader"
+        txs:
+          type: array
+          items:
+            type: string
+        evidence:
+          type: object
+          properties: {}
+        last_commit:
+          type: object
+          properties:
+            block_id:
+              $ref: "#/components/schemas/BlockID"
+            precommits:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  validator_address:
+                    type: string
+                  validator_index:
+                    type: string
+                    example: "0"
+                  height:
+                    type: string
+                    example: "0"
+                  round:
+                    type: string
+                    example: "0"
+                  timestamp:
+                    type: string
+                    example: 2017-12-30T05:53:09.287+01:00
+                  type:
+                    type: number
+                    example: 2.0
+                  block_id:
+                    $ref: "#/components/schemas/BlockID"
+                  signature:
+                    type: string
+                    example: 0xa11aa368e427c4be0bcc1befa6a8b623cfb1cf8154fc4ce0a22780519070bcff
+    BlockQuery:
+      type: object
+      properties:
+        block_meta:
+          type: object
+          properties:
+            header:
+              $ref: "#/components/schemas/BlockHeader"
+            block_id:
+              $ref: "#/components/schemas/BlockID"
+        block:
+          $ref: "#/components/schemas/Block"
+    DelegationDelegatorReward:
+      type: object
+      properties:
+        validator_address:
+          $ref: "#/components/schemas/ValidatorAddress"
+        reward:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+    DelegatorTotalRewards:
+      type: object
+      properties:
+        rewards:
+          type: array
+          items:
+            $ref: "#/components/schemas/DelegationDelegatorReward"
+        total:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+    BaseReq:
+      type: object
+      properties:
+        from:
+          type: string
+          description: Sender address or eth.ens name to generate a transaction
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+        memo:
+          type: string
+          example: a memo
+        chain_id:
+          type: string
+          example: testing
+        account_number:
+          type: string
+          example: "1"
+        sequence:
+          type: string
+          example: "0"
+        gas:
+          type: string
+          example: "200000"
+        gas_adjustment:
+          type: string
+          example: "1.0"
+        fees:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+        simulate:
+          type: boolean
+          description:
+            Estimate gas for a transaction (cannot be used in conjunction
+            with generate_only)
+          example: false
+    BesuValidator:
+      type: object
+      properties:
+        address:
+          $ref: "#/components/schemas/ValidatorAddress"
+        pub_key:
+          type: string
+          example: a8d7a05bda50521103f3
+        voting_power:
+          type: string
+          example: "1000"
+        proposer_priority:
+          type: string
+          example: "1000"
+    AtomicSwapResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: b8475cfd3162c5c2c6646945fe2d922b5206458682b79eff139bb0140a887f87d67285f006b34314
+        status:
+          type: string
+          example: Completed
+        amount:
+          $ref: "#/components/schemas/ERCBNB"
+        random_number_hash:
+          type: string
+          example: 0b1e35e991bf052be230ae8dd3ff90b69a610160d28a9eb3c0701395f9d2b291
+        expire_hieght:
+          type: string
+          example: "532463"
+        timestamp:
+          type: string
+          example: "1589020884"
+        sender:
+          $ref: "#/components/schemas/Address"
+        recipient:
+          $ref: "#/components/schemas/Address2"
+        sender_other_chain:
+          $ref: "#/components/schemas/BinanceChainAddress"
+        recipient_other_chain:
+          $ref: "#/components/schemas/BinanceChainAddress2"
+        closed_block:
+          type: string
+          example: "532105"
+        cross_chain:
+          $ref: "#/components/schemas/CrossChain"
+        direction:
+          type: string
+          example: Incoming
+    AssetSupplyResponse:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: bnb
+        incoming_supply:
+          $ref: "#/components/schemas/ERCBNB"
+        outgoing_supply:
+          $ref: "#/components/schemas/ERCBNB"
+        current_supply:
+          $ref: "#/components/schemas/ERCBNB"
+        limit:
+          $ref: "#/components/schemas/ERCBNB"
+    Bep3ParamsResponse:
+      type: object
+      properties:
+        bnb_deputy_address:
+          type: string
+          example: Yearn1aphsdnz5hu2t5ty2au6znprug5kx3zpy6zwq29
+        min_block_lock:
+          type: string
+          example: "80"
+        max_block_lock:
+          type: string
+          example: "3600"
+        supported_assets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Bep3Asset"
+    Bep3Asset:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: bnb
+        ERC_id:
+          type: string
+          example: "714"
+        limit:
+          type: string
+          example: "100"
+        active:
+          type: boolean
+          example: true
+    ClaimResponse:
+      type: object
+      properties:
+        owner:
+          type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+        reward:
+          $ref: "#/components/schemas/ERC"
+        denom:
+          type: string
+          example: bnb
+        claim_period_id:
+          type: string
+          example: "1"
+    IncentiveParams:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: true
+        rewards:
+          type: array
+          items:
+            $ref: "#/components/schemas/Reward"
+    Reward:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: true
+        denom:
+          type: string
+          example: bnb
+        available_rewards:
+          $ref: "#/components/schemas/ERC"
+        duration:
+          type: string
+          example: "36800000000000"
+        time_lock:
+          type: string
+          example: "36800000000000"
+        claim_duration:
+          type: string
+          example: "36800000000000"
+    PubProposal:
+      type: object
+      properties:
+        title:
+          type: string
+          example: the title of the proposal
+        description:
+          type: string
+          example: the description of the proposal
+    CdpResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        owner:
+          type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+        collateral:
+          $ref: "#/components/schemas/ERCCollateral"
+        type:
+          type: string
+          example: xrpb-a
+        principal:
+          $ref: "#/components/schemas/ERCPrincipal"
+        accumulated_fees:
+          $ref: "#/components/schemas/ERCPrincipal"
+        fees_updated:
+          type: string
+          example: 2020-02-05T23:45:55.761435272Z
+        collateral_value:
+          $ref: "#/components/schemas/ERCPrincipal"
+        collateralization_ratio:
+          type: string
+          example: "2.721734157907653857"
+    CdpDepositResponse:
+      type: object
+      properties:
+        cdp_id:
+          type: string
+          example: "1"
+        depositor:
+          type: string
+          example: Yearn1q53rwutgpzx7szcrgzqguxyccjpzt9j4cyctn9
+        amount:
+          $ref: "#/components/schemas/ERCCollateral"
+    PricefeedParameters:
+      type: object
+      properties:
+        markets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Market"
+    Price:
+      type: object
+      properties:
+        market_id:
+          type: string
+          example: xrp:usd
+        price:
+          type: string
+          example: "0.298758999999999997"
+    PostedPrice:
+      type: object
+      properties:
+        market_id:
+          type: string
+          example: xrp:usd
+        oracle_address:
+          type: string
+          example: Yearn10cw2m04528dwlc44k0myd7strj3eq5jr6s8pxs
+        price:
+          type: string
+          example: "0.298758999999999997"
+        expiry:
+          type: string
+          example: 2021-02-12T23:10:00Z
+    Market:
+      type: object
+      properties:
+        market_id:
+          type: string
+          example: xrp:usd
+        base_asset:
+          type: string
+          example: xrp
+        quote_asset:
+          type: string
+          example: usd
+        oracles:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Address"
+        active:
+          type: boolean
+          example: true
+    HarvestParams:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: true
+        liquidity_provider_schedules:
+          type: array
+          items:
+            $ref: "#/components/schemas/DistributionSchedule"
+        delegator_distribution_schedules:
+          type: array
+          items:
+            $ref: "#/components/schemas/DelegatorDistributionSchedule"
+    DistributionSchedule:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: true
+        deposit_denom:
+          type: string
+          example: xrp
+        start:
+          type: string
+          example: "1601220026"
+        end:
+          type: string
+          example: "1601930050"
+        rewards_per_second:
+          $ref: "#/components/schemas/ERC"
+        claim_end:
+          type: string
+          example: "1602227044"
+        claim_multipliers:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClaimMultipliers"
+    ClaimMultipliers:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/MultiplierName"
+        months_lockup:
+          type: string
+          example: "6"
+        factor:
+          type: string
+          example: "0.5"
+    DelegatorDistributionSchedule:
+      type: object
+      properties:
+        distribution_schedule:
+          $ref: "#/components/schemas/DistributionSchedule"
+        distribution_frequency:
+          type: string
+          example: "2958000000000000"
+    HarvestDepositResponse:
+      type: object
+      properties:
+        depositor:
+          $ref: "#/components/schemas/Address"
+        amount:
+          $ref: "#/components/schemas/ERC"
+        type:
+          $ref: "#/components/schemas/Address"
+    HarvestClaimResponse:
+      type: object
+      properties:
+        owner:
+          $ref: "#/components/schemas/Address"
+        deposit_denom:
+          type: string
+          example: xrp
+        amount:
+          $ref: "#/components/schemas/ERC"
+        type:
+          $ref: "#/components/schemas/DepositType"
+    DepositType:
+      type: string
+      example: lp
+    MultiplierName:
+      type: string
+      example: small
+    IssuanceParams:
+      type: object
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: "#/components/schemas/IssuanceAsset"
+    IssuanceAsset:
+      type: object
+      properties:
+        owner:
+          $ref: "#/components/schemas/Address"
+        denom:
+          type: string
+          example: btc
+        blocked_addresses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Address"
+        paused:
+          type: boolean
+          example: false
+        blockable:
+          type: boolean
+          example: true
+        rate_limit:
+          $ref: "#/components/schemas/RateLimit"
+    RateLimit:
+      type: object
+      properties:
+        active:
+          type: boolean
+          example: true
+        limit:
+          type: string
+          example: "500000000"
+        time_period:
+          type: string
+          example: "518400000000000"
+    AuctionParameters:
+      type: object
+      properties:
+        max_auction_duration:
+          type: string
+          example: "172800000000000"
+        bid_duration:
+          type: string
+          example: "600000000000"
+        increment_surplus:
+          type: string
+          example: "0.05"
+        increment_debt:
+          type: string
+          example: "0.05"
+        increment_collateral:
+          type: string
+          example: "0.05"
+    AuctionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        initiator:
+          type: string
+          example: liquidator
+        lot:
+          $ref: "#/components/schemas/ERCCollateral"
+        bidder:
+          $ref: "#/components/schemas/Address"
+        bid:
+          $ref: "#/components/schemas/ERC"
+        has_received_bids:
+          type: boolean
+          example: false
+        end_time:
+          type: string
+          example: 2020-02-05T23:45:55.761435272Z
+        max_end_time:
+          type: string
+          example: 2020-02-05T23:45:55.761435272Z
+        type:
+          type: string
+          example: collateral
+        phase:
+          type: string
+          example: forward
+    CollateralParam:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: xrp
+        liquidation_ratio:
+          type: string
+          example: "2.000000000000000000"
+        debt_limit:
+          $ref: "#/components/schemas/ERCPrincipal"
+        stability_fee:
+          type: string
+          example: "1.000000001547126000"
+        auction_size:
+          type: string
+          example: "5000000000"
+        liquidation_penalty:
+          type: string
+          example: "0.050000000000000000"
+        prefix:
+          type: integer
+          example: 0
+        market_id:
+          type: string
+          example: xrp:usd
+        conversion_factor:
+          type: string
+          example: "6"
+    DebtParam:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: usdx
+        reference_asset:
+          type: string
+          example: usd
+        conversion_factor:
+          type: string
+          example: "6"
+        debt_floor:
+          type: string
+          example: "10000000"
+    TextProposal:
+      type: object
+      properties:
+        proposal_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        proposal_type:
+          type: string
+        proposal_status:
+          type: string
+        final_tally_result:
+          $ref: "#/components/schemas/TallyResult"
+        submit_time:
+          type: string
+        total_deposit:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+        voting_start_time:
+          type: string
+    Proposer:
+      type: object
+      properties:
+        proposal_id:
+          type: string
+          example: "1"
+        proposer:
+          type: string
+          example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+    Deposit:
+      type: object
+      properties:
+        amount:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+        proposal_id:
+          type: string
+        depositor:
+          $ref: "#/components/schemas/Address"
+    TallyResult:
+      type: object
+      properties:
+        "yes":
+          type: string
+          example: "0.0000000000"
+        abstain:
+          type: string
+          example: "0.0000000000"
+        "no":
+          type: string
+          example: "0.0000000000"
+        no_with_veto:
+          type: string
+          example: "0.0000000000"
+    Vote:
+      type: object
+      properties:
+        voter:
+          type: string
+        proposal_id:
+          type: string
+        option:
+          type: string
+    KeeperVote:
+      type: object
+      properties:
+        voter:
+          type: string
+        proposal_id:
+          type: string
+    KeeperProposal:
+      type: object
+      properties:
+        pub_proposal:
+          $ref: "#/components/schemas/PubProposal"
+        id:
+          type: string
+          example: "1"
+        keeper_id:
+          type: string
+          example: "1"
+        deadline:
+          type: string
+          example: 2020-05-10T16:18:43.752522893Z
+    Keeper:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        description:
+          type: string
+          example: description of keeper
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/Address"
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+        vote_threshold:
+          type: string
+          example: "0.5"
+        proposal_duration:
+          type: string
+          example: "3600000000000"
+    Permission:
+      type: object
+      properties:
+        type:
+          type: string
+          example: param_change_permission
+        allowed_params:
+          type: array
+          items:
+            $ref: "#/components/schemas/AllowedParam"
+    AllowedParam:
+      type: object
+      properties:
+        subspace:
+          type: string
+          example: cdp
+        key:
+          type: string
+          example: collateral_params
+    Validator:
+      type: object
+      properties:
+        operator_address:
+          $ref: "#/components/schemas/ValidatorAddress"
+        consensus_pubkey:
+          type: string
+          example: a8d7a05bda50521103f3
+        jailed:
+          type: boolean
+        status:
+          type: integer
+        tokens:
+          type: string
+        delegator_shares:
+          type: string
+        description:
+          type: object
+          properties:
+            moniker:
+              type: string
+            identity:
+              type: string
+            website:
+              type: string
+            security_contact:
+              type: string
+            details:
+              type: string
+        bond_height:
+          type: string
+          example: "0"
+        bond_intra_tx_counter:
+          type: integer
+          example: 0
+        unbonding_height:
+          type: string
+          example: "0"
+        unbonding_time:
+          type: string
+          example: 1970-01-01T00:00:00Z
+        commission:
+          type: object
+          properties:
+            rate:
+              type: string
+              example: "0"
+            max_rate:
+              type: string
+              example: "0"
+            max_change_rate:
+              type: string
+              example: "0"
+            update_time:
+              type: string
+              example: 1970-01-01T00:00:00Z
+    Delegation:
+      type: object
+      properties:
+        delegator_address:
+          type: string
+        validator_address:
+          type: string
+        shares:
+          type: string
+        balance:
+          $ref: "#/components/schemas/ERC"
+    UnbondingDelegationPair:
+      type: object
+      properties:
+        delegator_address:
+          type: string
+        validator_address:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/UnbondingEntries"
+    UnbondingEntries:
+      type: object
+      properties:
+        initial_balance:
+          type: string
+        balance:
+          type: string
+        creation_height:
+          type: string
+        min_time:
+          type: string
+    UnbondingDelegation:
+      type: object
+      properties:
+        delegator_address:
+          type: string
+        validator_address:
+          type: string
+        initial_balance:
+          type: string
+        balance:
+          type: string
+        creation_height:
+          type: integer
+        min_time:
+          type: integer
+    Redelegation:
+      type: object
+      properties:
+        delegator_address:
+          type: string
+        validator_src_address:
+          type: string
+        validator_dst_address:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Redelegation"
+    RedelegationEntry:
+      type: object
+      properties:
+        creation_height:
+          type: integer
+        completion_time:
+          type: integer
+        initial_balance:
+          type: string
+        balance:
+          type: string
+        shares_dst:
+          type: string
+    ValidatorDistInfo:
+      type: object
+      properties:
+        operator_address:
+          $ref: "#/components/schemas/ValidatorAddress"
+        self_bond_rewards:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+        val_commission:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+    PublicKey:
+      type: object
+      properties:
+        type:
+          type: string
+        value:
+          type: string
+    SigningInfo:
+      type: object
+      properties:
+        start_height:
+          type: string
+        index_offset:
+          type: string
+        jailed_until:
+          type: string
+        missed_blocks_counter:
+          type: string
+    ParamChange:
+      type: object
+      properties:
+        subspace:
+          type: string
+          example: staking
+        key:
+          type: string
+          example: MaxValidators
+        subkey:
+          type: string
+          example: ""
+        value:
+          type: object
+          properties: {}
+    Supply:
+      type: object
+      properties:
+        total:
+          type: array
+          items:
+            $ref: "#/components/schemas/ERC"
+    StandardResponse:
+      type: object
+      properties:
+        height:
+          type: string
+        result:
+          type: string
+    DistributionPeriod:
+      type: object
+      properties:
+        start:
+          type: string
+          example: 2020-06-01:14:00:00Z
+        end:
+          type: string
+          example: 2020-06-01:14:00:00Z
+        inflation:
+          type: string
+          example: "1.000000001167363430"
+    PosteipTx:
+      type: object
+      properties:
+        msg:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostMsg"
+        fee:
+          type: object
+          properties:
+            gas:
+              type: string
+              example: "200000"
+            amount:
+              type: array
+              items:
+                $ref: "#/components/schemas/PostERC2"
+        memo:
+          type: string
+          example: ""
+        signatures:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostSignature"
+    PostMsg:
+      type: object
+      properties:
+        type:
+          type: string
+          example: ethereum/MsgSend
+        value:
+          type: object
+          properties:
+            from_address:
+              type: string
+              example: 0x4A0CF4bccDddF452d720a5B2978F54d03feCF633
+            to_address:
+              type: string
+              example: Yearn1ls82zzghsx0exkpr52m8vht5jqs3un0ceysshz
+            amount:
+              type: array
+              items:
+                $ref: "#/components/schemas/PostERC1"
+    PostERC1:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: stake
+        amount:
+          type: string
+          example: "2000000"
+    PostERC2:
+      type: object
+      properties:
+        denom:
+          type: string
+          example: stake
+        amount:
+          type: string
+          example: "2000"
+    PostSignature:
+      type: object
+      properties:
+        signature:
+          type: string
+          example: KzBeQp/2+47oiqc16BImnOYidSAesZ3kgR3S8Fy+baFlvDlDv7goU/+rm4c7+woudNte3uZAG0CuUeHsF+Ld8Q==
+        pubkey:
+          type: object
+          properties:
+            type:
+              type: string
+              example: Besu/PubKeySecp256k1
+            value:
+              type: string
+              example: AmWAim83Qp+kIcj3RT7i327b3l0EHwzCrGVGXusb70B7
+    EncodeTx:
+      type: object
+      properties:
+        type:
+          type: string
+          example: ethereum/eipTx
+        value:
+          $ref: "#/components/schemas/eipTx"
+  securitySchemes:
+    kms:
+      type: http
+      scheme: basic

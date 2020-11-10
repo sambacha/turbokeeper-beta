@@ -12,7 +12,7 @@ const {
   relayerAccount,
   isTxDataStr,
   isAddressStr,
-  isNetworkStr
+  isNetworkStr,
 } = require("./utils");
 const { isValidRecipient } = require("./eth/engines");
 const {
@@ -20,7 +20,7 @@ const {
   MAINNET_RPC_URL,
   LOCAL_RPC_URL,
   TURBOKEEPER_FEE,
-  TURBOKEEPER_MIN_TX_PROFIT
+  TURBOKEEPER_MIN_TX_PROFIT,
 } = require("./config");
 
 const { simulateTx } = require("./eth/simulationEth");
@@ -34,7 +34,7 @@ const app = express();
 // enable CORS
 app.use(cors());
 app.options("*", cors());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -60,10 +60,8 @@ app.post(
   [
     check("to").custom(isAddressStr),
     check("data").custom(isTxDataStr),
-    check("value")
-      .isInt()
-      .toInt(),
-    check("network").custom(isNetworkStr)
+    check("value").isInt().toInt(),
+    check("network").custom(isNetworkStr),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -90,8 +88,9 @@ app.post(
     // is set to a positive value
     if (TURBOKEEPER_MIN_TX_PROFIT > 0 && profit <= TURBOKEEPER_MIN_TX_PROFIT) {
       return res.status(403).json({
-        msg: `Fee too low! Try increasing the fee by ${TURBOKEEPER_MIN_TX_PROFIT -
-          profit} Wei`
+        msg: `Fee too low! Try increasing the fee by ${
+          TURBOKEEPER_MIN_TX_PROFIT - profit
+        } Wei`,
       });
     }
 
@@ -102,7 +101,7 @@ app.post(
 
     res.json({
       block: blockNumber,
-      txHash: hash
+      txHash: hash,
     });
   }
 );

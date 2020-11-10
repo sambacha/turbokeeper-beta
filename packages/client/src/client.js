@@ -5,17 +5,17 @@ const _ = require("lodash/core");
 const { reputationABI } = require("./abi");
 
 const DEFAULT_REPUTATION_ADDRESSES = {
-  RINKEBY: "<TODO>"
+  RINKEBY: "<TODO>",
 };
 
 // NOTE: We may want this to be an arg in the future
 const DEFAULT_RELAYER_BATCH_SIZE = 10;
 
-const getFeeRoute = locator => {
+const getFeeRoute = (locator) => {
   return `${locator}/fee`;
 };
 
-const getSubmitTxRoute = locator => {
+const getSubmitTxRoute = (locator) => {
   return `${locator}/submit_tx`;
 };
 
@@ -77,7 +77,7 @@ class TurboKeeperClient {
 
     // TODO: batch these calls with multicall
     const candidatesWithBurn = await Promise.all(
-      _.map(candidates, async candidate => {
+      _.map(candidates, async (candidate) => {
         const burn = await contract.relayerToBurn(candidate);
         return { burn, address: candidate };
       })
@@ -164,7 +164,7 @@ class TurboKeeperClient {
         to,
         data,
         value,
-        network: this.network
+        network: this.network,
       }
     );
 
@@ -177,5 +177,5 @@ class TurboKeeperClient {
 }
 
 module.exports = {
-  TurboKeeperClient
+  TurboKeeperClient,
 };

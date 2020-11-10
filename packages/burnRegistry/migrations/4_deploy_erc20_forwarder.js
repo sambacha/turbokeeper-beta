@@ -4,6 +4,6 @@ const ERC20RelayerForwarder = artifacts.require("ERC20RelayerForwarder");
 const burnNum = 1;
 const burnDenom = 100;
 
-module.exports = deployer => {
+module.exports = (deployer) => {
   deployer.deploy(ERC20RelayerForwarder, burnNum, burnDenom);
 };

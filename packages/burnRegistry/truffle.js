@@ -1,4 +1,4 @@
-const HTTPProviderRateLimitRetry = require('./http-provider-rate-limit-retry')
+const HTTPProviderRateLimitRetry = require("./http-provider-rate-limit-retry");
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -6,9 +6,13 @@ module.exports = {
   networks: {
     development: {
       provider: () => {
-        const appCred = 'fb778d97ca8f49739978160d838576ef'; // from application credential widget
-        const connectionURL = 'rinkeby.infura.io/v3/f1172b66c64b48c786f334adf1fab3b9'; // without protocol (https://)
-        return new HTTPProviderRateLimitRetry(`https://${appCred}@${connectionURL}`, 100000);
+        const appCred = "fb778d97ca8f49739978160d838576ef"; // from application credential widget
+        const connectionURL =
+          "rinkeby.infura.io/v3/f1172b66c64b48c786f334adf1fab3b9"; // without protocol (https://)
+        return new HTTPProviderRateLimitRetry(
+          `https://${appCred}@${connectionURL}`,
+          100000
+        );
       },
       network_id: "*", // Match any network id
       gasPrice: 0,
@@ -17,7 +21,6 @@ module.exports = {
     },
   },
   mocha: {
-    enableTimeouts: false
-  }
+    enableTimeouts: false,
+  },
 };
-

@@ -1,9 +1,9 @@
-require('ts-node/register');
+require("ts-node/register");
 
-const HDWalletProvider = require('truffle-hdwallet-provider');
-const fs = require('fs');
-const mnemonic = fs.readFileSync('.secret').toString().trim();
-const infuraKey = fs.readFileSync('.infura').toString().trim();
+const HDWalletProvider = require("truffle-hdwallet-provider");
+const fs = require("fs");
+const mnemonic = fs.readFileSync(".secret").toString().trim();
+const infuraKey = fs.readFileSync(".infura").toString().trim();
 const GWEI = 1000000000;
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           mnemonic,
-          `https://mainnet.infura.io/v3/${infuraKey}`,
+          `https://mainnet.infura.io/v3/${infuraKey}`
         ),
       network_id: 1, // Mainnet's id
       gas: 1, // gas block limit
@@ -41,7 +41,7 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           mnemonic,
-          `https://rinkeby.infura.io/v3/${infuraKey}`,
+          `https://rinkeby.infura.io/v3/${infuraKey}`
         ),
       network_id: 4, // rinkeby's id
       gas: 5500000, // rinkeby has a lower block limit than mainnet
@@ -51,8 +51,8 @@ module.exports = {
       skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
     },
     coverage: {
-      host: 'localhost',
-      network_id: '*',
+      host: "localhost",
+      network_id: "*",
       port: 8554, // <-- If you change this, also set the port option in .solcover.js.
       gas: 0xfffffffffff, // <-- Use this high gas value
       gasPrice: 0x01, // <-- Use this low gas price
@@ -60,7 +60,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: '0.6.0',
+      version: "0.6.0",
       settings: {
         optimizer: {
           enabled: true,
@@ -69,5 +69,5 @@ module.exports = {
       },
     },
   },
-  plugins: ['truffle-plugin-verify', 'solidity-coverage'],
+  plugins: ["truffle-plugin-verify", "solidity-coverage"],
 };

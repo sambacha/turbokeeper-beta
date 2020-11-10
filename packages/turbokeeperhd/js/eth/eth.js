@@ -18,7 +18,7 @@ const getFee = async (network, to, data, value) => {
     to,
     data,
     value,
-    from: address
+    from: address,
   });
 
   // NOTE: May want to change to return a BigNumber
@@ -26,7 +26,7 @@ const getFee = async (network, to, data, value) => {
   return cost + TURBOKEEPER_MIN_TX_PROFIT;
 };
 
-const getGasLimit = async provider => {
+const getGasLimit = async (provider) => {
   const blockNum = await provider.getBlockNumber();
   const block = await provider.getBlock(blockNum);
 
@@ -52,7 +52,7 @@ const sendTransaction = async (network, to, data, value) => {
     data,
     nonce,
     gasLimit,
-    gasPrice
+    gasPrice,
   };
 
   const signedTx = await signer.sign(unsignedTx);
@@ -63,5 +63,5 @@ const sendTransaction = async (network, to, data, value) => {
 
 module.exports = {
   getFee,
-  sendTransaction
+  sendTransaction,
 };

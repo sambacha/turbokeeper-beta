@@ -10,7 +10,7 @@ describe("getFee", () => {
       TEST_ETHERS_TX,
       TEST_NETWORK,
       TEST_GAS_ESTIMATE,
-      TEST_GAS_PRICE
+      TEST_GAS_PRICE,
     } = require("./engines");
     const { TURBOKEEPER_MIN_TX_PROFIT } = require("../config");
 
@@ -30,7 +30,7 @@ describe("sendTransaction", () => {
       TEST_ETHERS_TX,
       TEST_NETWORK,
       TEST_TX_HASH,
-      TEST_BLOCK_NUM
+      TEST_BLOCK_NUM,
     } = require("./engines");
 
     const { to, data, value } = TEST_ETHERS_TX;

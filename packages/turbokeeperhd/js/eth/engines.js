@@ -12,10 +12,10 @@ const {
   LOCAL_RPC_URL,
   TURBOKEEPER_PRIVATE_KEY,
   KOVAN_ALLOWED_RECIPIENTS,
-  MAINNET_ALLOWED_RECIPIENTS
+  MAINNET_ALLOWED_RECIPIENTS,
 } = require("../config");
 
-const networkToRpcUrl = network => {
+const networkToRpcUrl = (network) => {
   if (network === "KOVAN") {
     return KOVAN_RPC_URL;
   } else if (network === "MAINNET") {
@@ -30,23 +30,23 @@ const networkToRpcUrl = network => {
 /**
  * Create a forked version of web3 using the provided rpcUrl
  */
-const createForkedWeb3 = network => {
+const createForkedWeb3 = (network) => {
   const rpcUrl = networkToRpcUrl(network);
   return new Web3(
     ganache.provider({
-      fork: rpcUrl
+      fork: rpcUrl,
     })
   );
 };
 
 // NOTE: Creates a new provider on *each* invocation
-const getEthersProvider = network => {
+const getEthersProvider = (network) => {
   const rpcUrl = networkToRpcUrl(network);
   return new ethers.providers.JsonRpcProvider(rpcUrl);
 };
 
 // NOTE: Creates a new provider/wallet on *each* invocation
-const getEthersWallet = network => {
+const getEthersWallet = (network) => {
   const rpcUrl = networkToRpcUrl(network);
   return new ethers.Wallet(TURBOKEEPER_PRIVATE_KEY, rpcUrl);
 };
@@ -76,5 +76,5 @@ module.exports = {
   createForkedWeb3,
   getEthersProvider,
   getEthersWallet,
-  isValidRecipient
+  isValidRecipient,
 };

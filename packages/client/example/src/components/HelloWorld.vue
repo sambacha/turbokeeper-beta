@@ -14,13 +14,13 @@ import { ethers } from "ethers";
 export default {
   name: "HelloWorld",
   props: {
-    msg: String
+    msg: String,
   },
 
   data() {
     return {
       surrogethClient: TurboKeeperClient,
-      relayer: null
+      relayer: null,
     };
   },
 
@@ -43,7 +43,7 @@ export default {
 
     // NOTE: expect failure
     await client.submitTx({}, relayers[0]);
-  }
+  },
 };
 </script>
 

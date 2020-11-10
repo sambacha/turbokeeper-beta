@@ -6,11 +6,12 @@ Yearn vaults maintain a certain buffer to not deployed into a strategy to allow 
 
 This keeper bot ensures the buffer is kept as tight as possible by calling `earn()` on vaults when `available / balance > ratio`.
 
-It consists of a contract that can batch call `earn()` on all vaults and a script that determines which vaults need poking. 
+It consists of a contract that can batch call `earn()` on all vaults and a script that determines which vaults need poking.
 
 ## Usage
 
 Import a keystore to Brownie:
+
 ```
 brownie accounts import keeper keystore.json
 ```
