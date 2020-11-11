@@ -1,0 +1,14 @@
+{
+  "name": "turbokeeper/jq",
+  "description": "jq as a service",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "see contributors",
+      "email": "no-reply@github.com"
+    }
+  ],
+  "require": {
+    "php": "^7.1"
+  }
+}
