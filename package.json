@@ -5,6 +5,13 @@
     "postinstall": "npm install --prefix turbokeeperhd"
   },
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "lerna": "^3.22.1",
+    "prettier": "^2.1.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.59",
+    "solhint": "^3.3.2",
+    "solhint-plugin-prettier": "^0.0.5"
   }
 }
