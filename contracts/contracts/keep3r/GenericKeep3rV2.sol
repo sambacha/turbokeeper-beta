@@ -2,7 +2,7 @@
 
 pragma solidity >=0.6.8;
 
-import "@openzeppelinV3/contracts/math/SafeMath.sol";
+import " @openzeppelin/contracts/math/SafeMath.sol";
 
 import "../../interfaces/Keep3r/IStrategyKeep3r.sol";
 import "../../interfaces/yearn/IBaseStrategy.sol";

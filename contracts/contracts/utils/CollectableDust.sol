@@ -2,9 +2,9 @@
 
 pragma solidity >=0.6.8;
 
-import "@openzeppelinV3/contracts/utils/Address.sol";
-import "@openzeppelinV3/contracts/utils/EnumerableSet.sol";
-import "@openzeppelinV3/contracts/token/ERC20/IERC20.sol";
+import " @openzeppelin/contracts/utils/Address.sol";
+import " @openzeppelin/contracts/utils/EnumerableSet.sol";
+import " @openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../../interfaces/utils/ICollectableDust.sol";
 

@@ -11,5 +11,12 @@
     },
     "keywords": [],
     "author": "",
-    "license": "SEE LICENSE IN LICENSE"
+    "license": "SEE LICENSE IN LICENSE",
+    "devDependencies": {
+        "truffle": "^5.1.52",
+        "truffle-abi": "^1.0.3"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^3.2.0"
+    }
 }

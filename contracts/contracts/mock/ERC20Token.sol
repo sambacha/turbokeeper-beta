@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.6.8;
-import "@openzeppelinV3/contracts/token/ERC20/ERC20.sol";
+import " @openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ERC20Token is ERC20 {
     constructor(
