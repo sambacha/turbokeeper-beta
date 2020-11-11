@@ -1,4 +1,4 @@
-const { TurboKeeperClient } = require("./client");
+const {TurboKeeperClient} = require("./client");
 
 jest.mock("ethers");
 

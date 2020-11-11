@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 
-const { check, validationResult } = require("express-validator");
+const {check, validationResult} = require("express-validator");
 
 const AsyncLock = require("async-lock");
 
@@ -14,7 +14,7 @@ const {
   isAddressStr,
   isNetworkStr,
 } = require("./utils");
-const { isValidRecipient } = require("./eth/engines");
+const {isValidRecipient} = require("./eth/engines");
 const {
   KOVAN_RPC_URL,
   MAINNET_RPC_URL,
@@ -23,8 +23,8 @@ const {
   TURBOKEEPER_MIN_TX_PROFIT,
 } = require("./config");
 
-const { simulateTx } = require("./eth/simulationEth");
-const { sendTransaction } = require("./eth/eth");
+const {simulateTx} = require("./eth/simulationEth");
+const {sendTransaction} = require("./eth/eth");
 
 const lock = new AsyncLock();
 const nonceKey = `nonce_${relayerAccount.address}`;
@@ -47,12 +47,12 @@ app.use(express.json());
 
 app.get("/address", (req, res) => {
   console.info("Serving address request");
-  res.json({ address: relayerAccount.address });
+  res.json({address: relayerAccount.address});
 });
 
 app.get("/fee", async (req, res) => {
   console.info("Serving fee request");
-  res.json({ fee: TURBOKEEPER_FEE });
+  res.json({fee: TURBOKEEPER_FEE});
 });
 
 app.post(
@@ -67,18 +67,16 @@ app.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.info("Invalid parameters on tx submission request");
-      return res.status(422).json({ errors: errors.array() });
+      return res.status(422).json({errors: errors.array()});
     }
-    const { to, data, value, network } = req.body;
+    const {to, data, value, network} = req.body;
 
     console.info(
       `Serving tx submission request: to: ${to}, value: ${value}, network: ${network}, data: ${data}`
     );
 
     if (!isValidRecipient(to, network)) {
-      return res
-        .status(403)
-        .json({ msg: `I don't send transactions to ${to}` });
+      return res.status(403).json({msg: `I don't send transactions to ${to}`});
     }
 
     // simulate the transaction
@@ -95,7 +93,7 @@ app.post(
     }
 
     // TODO: Push nonce locking down to submission method and unit test it
-    const { blockNumber, hash } = await lock.acquire(nonceKey, async () => {
+    const {blockNumber, hash} = await lock.acquire(nonceKey, async () => {
       return sendTransaction(network, to, data, value);
     });
 

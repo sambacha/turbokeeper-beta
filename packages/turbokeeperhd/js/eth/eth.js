@@ -2,15 +2,15 @@
  * Utilities for interacting with the real (not simulated) Ethereum network.
  */
 
-const { getEthersProvider, getEthersWallet } = require("./engines");
-const { TURBOKEEPER_MIN_TX_PROFIT } = require("../config");
-const { relayerAccount } = require("../utils");
+const {getEthersProvider, getEthersWallet} = require("./engines");
+const {TURBOKEEPER_MIN_TX_PROFIT} = require("../config");
+const {relayerAccount} = require("../utils");
 
 /**
  * @deprecated Gets the fee that this relayer will quote for the provided tx.
  */
 const getFee = async (network, to, data, value) => {
-  const { address } = relayerAccount;
+  const {address} = relayerAccount;
   const provider = getEthersProvider(network);
 
   const gasPrice = await provider.getGasPrice();
@@ -41,7 +41,7 @@ const sendTransaction = async (network, to, data, value) => {
   const provider = getEthersProvider(network);
   const signer = getEthersWallet(network);
 
-  const { address } = relayerAccount;
+  const {address} = relayerAccount;
 
   const nonce = await provider.getTransactionCount(address, "pending");
   const gasLimit = await getGasLimit(provider);

@@ -4,13 +4,18 @@ contract ERC20RelayerReputation {
     event RelayerAdded(address indexed _relayer);
     event RelayerTokenPairAdded(address indexed _relayer, address _erc20);
 
-    event ReputationUpdated(address indexed _relayer, address _erc20, uint256 _burnValue);
+    event ReputationUpdated(
+        address indexed _relayer,
+        address _erc20,
+        uint256 _burnValue
+    );
 
     address public forwarderAddress;
 
     // 'Reputation' maps
     mapping(address => mapping(address => uint256)) public relayerToTokenToBurn;
-    mapping(address => mapping(address => uint256)) public relayerToTokenToCount;
+    mapping(address => mapping(address => uint256))
+        public relayerToTokenToCount;
 
     // This enables enumeration of all tokens that a given relayer has serviced
     struct TokenList {
@@ -23,7 +28,11 @@ contract ERC20RelayerReputation {
      * Gets the next ERC20 token index to be used for the specified relayer
      * @param _relayer relayer whose next index to get
      */
-    function getRelayerNextToken(address _relayer) external view returns (uint256) {
+    function getRelayerNextToken(address _relayer)
+        external
+        view
+        returns (uint256)
+    {
         return relayerToTokenList[_relayer].nextToken;
     }
 
@@ -32,13 +41,17 @@ contract ERC20RelayerReputation {
      * @param _relayer relayer whose tokens to search
      * @param _idx index in the relayer's token list to return
      */
-    function getRelayerToken(address _relayer, uint256 _idx) external view returns (address) {
+    function getRelayerToken(address _relayer, uint256 _idx)
+        external
+        view
+        returns (address)
+    {
         return relayerToTokenList[_relayer].tokenList[_idx];
     }
 
     // Information that allows clients to find relayers on the web. i.e. via http or tor
     struct RelayerLocator {
-        string locator;     // i.e. Tor or HTTP address
+        string locator; // i.e. Tor or HTTP address
         string locatorType; // i.e. 'tor' or 'http'
     }
     mapping(address => RelayerLocator) public relayerToLocator;
@@ -56,7 +69,10 @@ contract ERC20RelayerReputation {
      * Throws if called by any account other than the forwarder.
      */
     modifier onlyForwarder() {
-        require(msg.sender == forwarderAddress, "ERC20RelayerReputation: caller is not the forwarder");
+        require(
+            msg.sender == forwarderAddress,
+            "ERC20RelayerReputation: caller is not the forwarder"
+        );
         _;
     }
 
@@ -69,7 +85,9 @@ contract ERC20RelayerReputation {
         emit RelayerAdded(_relayer);
     }
 
-    function _addTokenToRelayer(address _relayer, address _erc20Address) internal {
+    function _addTokenToRelayer(address _relayer, address _erc20Address)
+        internal
+    {
         uint256 nextToken = relayerToTokenList[_relayer].nextToken;
 
         relayerToTokenList[_relayer].tokenList[nextToken] = _erc20Address;
@@ -85,13 +103,17 @@ contract ERC20RelayerReputation {
      * @param _locator The new locator to set
      * @param _locatorType The locator type to use
      */
-    function setRelayerLocator(address _relayer, string calldata _locator, string calldata _locatorType) external {
-        require(_relayer == msg.sender, "ERC20RelayerReputation: can only set the locator for self");
-
-        relayerToLocator[_relayer] = RelayerLocator(
-            _locator,
-            _locatorType
+    function setRelayerLocator(
+        address _relayer,
+        string calldata _locator,
+        string calldata _locatorType
+    ) external {
+        require(
+            _relayer == msg.sender,
+            "ERC20RelayerReputation: can only set the locator for self"
         );
+
+        relayerToLocator[_relayer] = RelayerLocator(_locator, _locatorType);
     }
 
     /**
@@ -102,7 +124,11 @@ contract ERC20RelayerReputation {
      * @param _erc20Address The ERC20 token that's being burned for _burnValue
      * @param _burnValue The amount of wei burned by the specified relayer
      */
-    function updateReputation(address _relayer, address _erc20Address, uint256 _burnValue) external onlyForwarder {
+    function updateReputation(
+        address _relayer,
+        address _erc20Address,
+        uint256 _burnValue
+    ) external onlyForwarder {
         if (relayerToTokenList[_relayer].nextToken == 0) {
             _addRelayer(_relayer);
         }

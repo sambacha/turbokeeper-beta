@@ -11,7 +11,7 @@ npm install turbokeeper-client
 ## Usage
 
 ```javascript
-import { TurboKeeperClient } from "turbokeeper-client";
+import {TurboKeeperClient} from "turbokeeper-client";
 
 const client = new TurboKeeperClient(
   ethersJsProvider,

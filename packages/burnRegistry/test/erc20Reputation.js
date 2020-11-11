@@ -1,4 +1,4 @@
-const { expectRevert } = require("openzeppelin-test-helpers");
+const {expectRevert} = require("openzeppelin-test-helpers");
 
 const ERC20RelayerReputation = artifacts.require("ERC20RelayerReputation");
 

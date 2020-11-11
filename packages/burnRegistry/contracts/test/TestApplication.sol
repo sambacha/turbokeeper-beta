@@ -30,5 +30,5 @@ contract TestApplication {
     }
 
     // NOTE: To enable funding this contract in tests
-    function () external payable {}
+    function() external payable {}
 }

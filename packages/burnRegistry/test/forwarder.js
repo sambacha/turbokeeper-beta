@@ -1,4 +1,4 @@
-const { expectRevert } = require("openzeppelin-test-helpers");
+const {expectRevert} = require("openzeppelin-test-helpers");
 
 const RelayerReputation = artifacts.require("RelayerReputation");
 const RelayerForwarder = artifacts.require("RelayerForwarder");
@@ -30,7 +30,7 @@ contract("RelayerForwarder", (accounts) => {
     });
 
     applicationContract = await TestApplication.new(applicationFee);
-    applicationContract.send(applicationFunding, { from: accounts[0] }); // NOTE: Fund application contract
+    applicationContract.send(applicationFunding, {from: accounts[0]}); // NOTE: Fund application contract
 
     feePayload = await applicationContract.feePayload();
     noFeePayload = await applicationContract.noFeePayload();
@@ -63,7 +63,7 @@ contract("RelayerForwarder", (accounts) => {
           await forwarderContract.relayCall(
             applicationContract.address,
             noFeePayload,
-            { from: accounts[0] }
+            {from: accounts[0]}
           );
         });
 
@@ -98,7 +98,7 @@ contract("RelayerForwarder", (accounts) => {
           await forwarderContract.relayCall(
             applicationContract.address,
             feePayload,
-            { from: accounts[0] }
+            {from: accounts[0]}
           );
         });
 
@@ -135,13 +135,13 @@ contract("RelayerForwarder", (accounts) => {
       });
 
       let applicationContract2 = await TestApplication.new(applicationFee);
-      applicationContract2.send(applicationFunding, { from: accounts[0] }); // NOTE: Fund application contract
+      applicationContract2.send(applicationFunding, {from: accounts[0]}); // NOTE: Fund application contract
 
       // NOTE: fee on one, no fee on the other
       await forwarderContract.batchRelayCall(
         [applicationContract.address, applicationContract2.address],
         [noFeePayload, feePayload],
-        { from: accounts[0] }
+        {from: accounts[0]}
       );
 
       let value = await applicationContract.value();
@@ -178,7 +178,7 @@ contract("RelayerForwarder", (accounts) => {
       await forwarderContract.relayCall(
         applicationContract.address,
         feePayload,
-        { from: accounts[0] }
+        {from: accounts[0]}
       );
 
       let initNullBalance = await web3.eth.getBalance(nullAddress);

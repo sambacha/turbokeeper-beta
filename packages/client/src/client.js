@@ -2,7 +2,7 @@ const axios = require("axios");
 const ethers = require("ethers");
 const _ = require("lodash/core");
 
-const { reputationABI } = require("./abi");
+const {reputationABI} = require("./abi");
 
 const DEFAULT_REPUTATION_ADDRESSES = {
   RINKEBY: "<TODO>",
@@ -79,23 +79,23 @@ class TurboKeeperClient {
     const candidatesWithBurn = await Promise.all(
       _.map(candidates, async (candidate) => {
         const burn = await contract.relayerToBurn(candidate);
-        return { burn, address: candidate };
+        return {burn, address: candidate};
       })
     );
 
     const sortedCandidates = _.sortBy(
       candidatesWithBurn,
-      ({ burn }) => -1 * burn
+      ({burn}) => -1 * burn
     );
 
     // Iterate backwards through candidates until we hit 'numRelayers' of an allowed locator type
     let toReturn = [];
     for (const candidate of sortedCandidates) {
-      const { address, burn } = candidate;
-      const { locator, locatorType } = await contract.relayerToLocator(address);
+      const {address, burn} = candidate;
+      const {locator, locatorType} = await contract.relayerToLocator(address);
 
       if (allowedLocatorTypes.has(locatorType)) {
-        toReturn.push({ locator, locatorType, address, burn });
+        toReturn.push({locator, locatorType, address, burn});
       }
 
       if (toReturn.length >= numRelayers) {
@@ -115,7 +115,7 @@ class TurboKeeperClient {
    * @returns {number|null} The fee in Wei advertised by the specified relayer.
    */
   async getRelayerFee(relayer) {
-    const { locator, locatorType } = relayer;
+    const {locator, locatorType} = relayer;
 
     if (locatorType !== "ip") {
       console.log(
@@ -148,8 +148,8 @@ class TurboKeeperClient {
    * @returns {string|null} The transaction hash of the submitted transaction
    */
   async submitTx(tx, relayer) {
-    const { locator, locatorType } = relayer;
-    const { to, data, value } = tx;
+    const {locator, locatorType} = relayer;
+    const {to, data, value} = tx;
 
     if (locatorType !== "ip") {
       console.log(

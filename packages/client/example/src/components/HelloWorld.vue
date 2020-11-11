@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import { TurboKeeperClient } from "surrogeth-client";
-import { ethers } from "ethers";
+import {TurboKeeperClient} from "surrogeth-client";
+import {ethers} from "ethers";
 
 export default {
   name: "HelloWorld",

@@ -1,4 +1,5 @@
 pragma solidity 0.7.0;
+
 // SPDX-License-Identifier: MIT
 
 interface Vault {
@@ -7,7 +8,7 @@ interface Vault {
 
 contract VaultKeeper {
     function earn(address[] calldata vaults) external {
-        for (uint i=0; i<vaults.length; i++) {
+        for (uint256 i = 0; i < vaults.length; i++) {
             Vault(vaults[i]).earn();
         }
     }

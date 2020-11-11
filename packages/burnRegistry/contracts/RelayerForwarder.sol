@@ -20,15 +20,18 @@ contract RelayerForwarder is Ownable {
     }
 
     constructor(uint256 _burnNum, uint256 _burnDenom) public {
-        require(_burnDenom >= _burnNum, "RelayerForwarder: burn fraction denominator must be >= numerator");
-        burnFraction = Fraction(
-            _burnNum,
-            _burnDenom
+        require(
+            _burnDenom >= _burnNum,
+            "RelayerForwarder: burn fraction denominator must be >= numerator"
         );
+        burnFraction = Fraction(_burnNum, _burnDenom);
     }
 
     function _computeBurn(uint256 feePlusBurn) internal view returns (uint256) {
-        return feePlusBurn.mul(burnFraction.numerator).div(burnFraction.denominator);
+        return
+            feePlusBurn.mul(burnFraction.numerator).div(
+                burnFraction.denominator
+            );
     }
 
     function _relayCall(
@@ -37,8 +40,11 @@ contract RelayerForwarder is Ownable {
     ) internal returns (uint256 fee, uint256 burn) {
         // feePlusBurn calculated by the increase in balance of this contract
         uint256 prevBalance = address(this).balance;
-        (bool success,) = _applicationContract.call(_encodedPayload);
-        require(success, "RelayerForwarder: failure calling application contract");
+        (bool success, ) = _applicationContract.call(_encodedPayload);
+        require(
+            success,
+            "RelayerForwarder: failure calling application contract"
+        );
         uint256 finalBalance = address(this).balance;
 
         if (finalBalance > prevBalance) {
@@ -57,7 +63,7 @@ contract RelayerForwarder is Ownable {
     /**
      * Enables sending Ether to this contract
      */
-    function () external payable {}
+    function() external payable {}
 
     /**
      * Sets the fraction of fee that's burned.
@@ -65,12 +71,15 @@ contract RelayerForwarder is Ownable {
      * @param _burnNum The new numerator for burnFraction
      * @param _burnDenom The new denominator for burnFraction
      */
-    function setBurnFraction(uint256 _burnNum, uint256 _burnDenom) external onlyOwner {
-        require(_burnDenom >= _burnNum, "RelayerForwarder: burn fraction denominator must be >= numerator");
-        burnFraction = Fraction(
-            _burnNum,
-            _burnDenom
+    function setBurnFraction(uint256 _burnNum, uint256 _burnDenom)
+        external
+        onlyOwner
+    {
+        require(
+            _burnDenom >= _burnNum,
+            "RelayerForwarder: burn fraction denominator must be >= numerator"
         );
+        burnFraction = Fraction(_burnNum, _burnDenom);
     }
 
     /**
@@ -104,11 +113,20 @@ contract RelayerForwarder is Ownable {
         address _applicationContract,
         bytes calldata _encodedPayload
     ) external {
-        require(address(reputation) != address(0), "RelayerForwarder: reputation contract must be set to relay calls");
+        require(
+            address(reputation) != address(0),
+            "RelayerForwarder: reputation contract must be set to relay calls"
+        );
 
-        require(tx.origin == msg.sender, "RelayerForwarder: cannot relay calls from another contract");
+        require(
+            tx.origin == msg.sender,
+            "RelayerForwarder: cannot relay calls from another contract"
+        );
 
-        (uint256 fee, uint256 burn) = _relayCall(_applicationContract, _encodedPayload);
+        (uint256 fee, uint256 burn) = _relayCall(
+            _applicationContract,
+            _encodedPayload
+        );
 
         address payable relayer = msg.sender;
         if (fee > 0) {
@@ -128,9 +146,15 @@ contract RelayerForwarder is Ownable {
         address[] calldata _applicationContracts,
         bytes[] calldata _encodedPayloads
     ) external {
-        require(address(reputation) != address(0), "RelayerForwarder: reputation contract must be set to relay calls");
+        require(
+            address(reputation) != address(0),
+            "RelayerForwarder: reputation contract must be set to relay calls"
+        );
 
-        require(tx.origin == msg.sender, "RelayerForwarder: cannot relay calls from another contract");
+        require(
+            tx.origin == msg.sender,
+            "RelayerForwarder: cannot relay calls from another contract"
+        );
 
         require(
             _applicationContracts.length == _encodedPayloads.length,
@@ -139,8 +163,11 @@ contract RelayerForwarder is Ownable {
 
         address payable relayer = msg.sender;
         uint256 totalRelayerFee = 0;
-        for (uint i = 0; i < _applicationContracts.length; i++) {
-            (uint256 fee, uint256 burn) = _relayCall(_applicationContracts[i], _encodedPayloads[i]);
+        for (uint256 i = 0; i < _applicationContracts.length; i++) {
+            (uint256 fee, uint256 burn) = _relayCall(
+                _applicationContracts[i],
+                _encodedPayloads[i]
+            );
 
             totalRelayerFee += fee;
             reputation.updateReputation(relayer, burn);

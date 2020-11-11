@@ -5,8 +5,8 @@
 const Accounts = require("web3-eth-accounts");
 const accounts = new Accounts();
 
-const { createForkedWeb3 } = require("./engines");
-const { relayerAccount } = require("../utils");
+const {createForkedWeb3} = require("./engines");
+const {relayerAccount} = require("../utils");
 
 /**
  * Sign the provided tx.
@@ -38,7 +38,7 @@ const buildSimTx = async (forkedWeb3, to, data, value) => {
  */
 const simulateTx = async (network, to, data, value) => {
   const forkedWeb3 = createForkedWeb3(network);
-  const { address, privateKey } = relayerAccount;
+  const {address, privateKey} = relayerAccount;
 
   const tx = await buildSimTx(forkedWeb3, to, data, value);
 

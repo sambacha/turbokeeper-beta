@@ -23,7 +23,7 @@
  * @date 2015
  */
 
-var { inspect } = require("util");
+var {inspect} = require("util");
 
 var retry = require("retry");
 var errors = require("web3-core-helpers").errors;
@@ -51,9 +51,9 @@ var HTTPProviderRateLimitRetry = function HTTPProviderRateLimitRetry(
   options = options || {};
   this.host = host || "http://localhost:8545";
   if (this.host.substring(0, 5) === "https") {
-    this.httpsAgent = new https.Agent({ keepAlive: true });
+    this.httpsAgent = new https.Agent({keepAlive: true});
   } else {
-    this.httpAgent = new http.Agent({ keepAlive: true });
+    this.httpAgent = new http.Agent({keepAlive: true});
   }
   this.timeout = options.timeout || 0;
   this.headers = options.headers;

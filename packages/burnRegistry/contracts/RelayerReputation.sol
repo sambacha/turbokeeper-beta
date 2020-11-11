@@ -12,7 +12,7 @@ contract RelayerReputation {
 
     // Information that allows clients to find relayers on the web. i.e. via http or tor
     struct RelayerLocator {
-        string locator;     // i.e. Tor or IP address
+        string locator; // i.e. Tor or IP address
         string locatorType; // i.e. 'tor' or 'ip'
     }
     mapping(address => RelayerLocator) public relayerToLocator;
@@ -32,7 +32,10 @@ contract RelayerReputation {
      * Throws if called by any account other than the forwarder.
      */
     modifier onlyForwarder() {
-        require(msg.sender == forwarderAddress, "RelayerReputation: caller is not the forwarder");
+        require(
+            msg.sender == forwarderAddress,
+            "RelayerReputation: caller is not the forwarder"
+        );
         _;
     }
 
@@ -50,17 +53,21 @@ contract RelayerReputation {
      * @param _locator The new locator to set
      * @param _locatorType The locator type to use
      */
-    function setRelayerLocator(address _relayer, string calldata _locator, string calldata _locatorType) external {
-        require(_relayer == msg.sender, "RelayerReputation: can only set the locator for self");
+    function setRelayerLocator(
+        address _relayer,
+        string calldata _locator,
+        string calldata _locatorType
+    ) external {
+        require(
+            _relayer == msg.sender,
+            "RelayerReputation: can only set the locator for self"
+        );
 
         if (!_seenRelayers[_relayer]) {
             _addRelayer(_relayer);
         }
 
-        relayerToLocator[_relayer] = RelayerLocator(
-            _locator,
-            _locatorType
-        );
+        relayerToLocator[_relayer] = RelayerLocator(_locator, _locatorType);
     }
 
     /**
@@ -70,7 +77,10 @@ contract RelayerReputation {
      * @param _relayer The relayer whose reputation to update
      * @param _burnValue The amount of wei burned by the specified relayer
      */
-    function updateReputation(address _relayer, uint256 _burnValue) external onlyForwarder {
+    function updateReputation(address _relayer, uint256 _burnValue)
+        external
+        onlyForwarder
+    {
         if (!_seenRelayers[_relayer]) {
             _addRelayer(_relayer);
         }

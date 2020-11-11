@@ -1,4 +1,4 @@
-const { expectRevert } = require("openzeppelin-test-helpers");
+const {expectRevert} = require("openzeppelin-test-helpers");
 
 const RelayerReputation = artifacts.require("RelayerReputation");
 
@@ -25,7 +25,7 @@ contract("RelayerReputation", (accounts) => {
         from: accounts[1],
       });
 
-      let { locator, locatorType } = await reputationContract.relayerToLocator(
+      let {locator, locatorType} = await reputationContract.relayerToLocator(
         accounts[1]
       );
       assert.equal(locator, "foo");

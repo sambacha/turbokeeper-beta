@@ -1,4 +1,4 @@
-const { PORT } = require("./config");
+const {PORT} = require("./config");
 const app = require("./app");
 
 // Configure console logging statements

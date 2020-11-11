@@ -1,6 +1,6 @@
 const ethers = require("ethers");
 
-const { relayerAccount } = require("../../utils");
+const {relayerAccount} = require("../../utils");
 
 const SIGNED = "0x123";
 const INIT_RELAYER_BALANCE = 10000;
@@ -22,7 +22,7 @@ const createForkedWeb3 = (network) => {
   let balances = {};
   balances[relayerAddress] = INIT_RELAYER_BALANCE;
 
-  let ret = { eth: { accounts: {} } };
+  let ret = {eth: {accounts: {}}};
   ret.eth.getBalance = (address) => {
     if (address in balances) {
       return balances[address];
@@ -34,12 +34,12 @@ const createForkedWeb3 = (network) => {
     expect(tx).toStrictEqual(TEST_WEB3_TX);
     expect(privateKey).toBe(relayerAccount.privateKey);
 
-    return { rawTransaction: SIGNED };
+    return {rawTransaction: SIGNED};
   };
   ret.eth.sendSignedTransaction = (signedTx) => {
     expect(signedTx).toBe(SIGNED);
 
-    const { to, value } = TEST_WEB3_TX;
+    const {to, value} = TEST_WEB3_TX;
 
     balances[relayerAddress] -= value;
     if (!(to in balances)) {
@@ -50,7 +50,7 @@ const createForkedWeb3 = (network) => {
   ret.eth.getBlock = (b) => {
     expect(b).toBe("latest");
 
-    return { gasLimit: GAS_LIMIT };
+    return {gasLimit: GAS_LIMIT};
   };
 
   return ret;
@@ -91,7 +91,7 @@ const getEthersProvider = (network) => {
 
     getBlock: (blockNum) => {
       expect(blockNum).toBe(TEST_BLOCK_NUM);
-      return { gasLimit: GAS_LIMIT };
+      return {gasLimit: GAS_LIMIT};
     },
 
     sendTransaction: (signedTx) => {

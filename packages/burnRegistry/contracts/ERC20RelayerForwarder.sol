@@ -13,7 +13,7 @@ contract ERC20RelayerForwarder is Ownable {
     address payable constant burnAddress = address(0);
 
     Fraction public burnFraction; // NOTE: represents the fraction of fee used as burn. Currently is the same
-                                  // *for all* ERC20 tokens
+    // *for all* ERC20 tokens
     ERC20RelayerReputation public reputation;
 
     struct Fraction {
@@ -22,15 +22,18 @@ contract ERC20RelayerForwarder is Ownable {
     }
 
     constructor(uint256 _burnNum, uint256 _burnDenom) public {
-        require(_burnDenom >= _burnNum, "ERC20RelayerForwarder: burn fraction denominator must be >= numerator");
-        burnFraction = Fraction(
-            _burnNum,
-            _burnDenom
+        require(
+            _burnDenom >= _burnNum,
+            "ERC20RelayerForwarder: burn fraction denominator must be >= numerator"
         );
+        burnFraction = Fraction(_burnNum, _burnDenom);
     }
 
     function _computeBurn(uint256 feePlusBurn) internal view returns (uint256) {
-        return feePlusBurn.mul(burnFraction.numerator).div(burnFraction.denominator);
+        return
+            feePlusBurn.mul(burnFraction.numerator).div(
+                burnFraction.denominator
+            );
     }
 
     function _relayCall(
@@ -42,8 +45,11 @@ contract ERC20RelayerForwarder is Ownable {
 
         // feePlusBurn calculated by the increase in balance of this contract
         uint256 prevBalance = erc20Contract.balanceOf(address(this));
-        (bool success,) = _applicationContract.call(_encodedPayload);
-        require(success, "ERC20RelayerForwarder: failure calling application contract");
+        (bool success, ) = _applicationContract.call(_encodedPayload);
+        require(
+            success,
+            "ERC20RelayerForwarder: failure calling application contract"
+        );
         uint256 finalBalance = erc20Contract.balanceOf(address(this));
 
         if (finalBalance > prevBalance) {
@@ -62,7 +68,7 @@ contract ERC20RelayerForwarder is Ownable {
     /**
      * Enables sending Ether to this contract
      */
-    function () external payable {}
+    function() external payable {}
 
     /**
      * Sets the fraction of fee that's burned.
@@ -70,12 +76,15 @@ contract ERC20RelayerForwarder is Ownable {
      * @param _burnNum The new numerator for burnFraction
      * @param _burnDenom The new denominator for burnFraction
      */
-    function setBurnFraction(uint256 _burnNum, uint256 _burnDenom) external onlyOwner {
-        require(_burnDenom >= _burnNum, "ERC20RelayerForwarder: burn fraction denominator must be >= numerator");
-        burnFraction = Fraction(
-            _burnNum,
-            _burnDenom
+    function setBurnFraction(uint256 _burnNum, uint256 _burnDenom)
+        external
+        onlyOwner
+    {
+        require(
+            _burnDenom >= _burnNum,
+            "ERC20RelayerForwarder: burn fraction denominator must be >= numerator"
         );
+        burnFraction = Fraction(_burnNum, _burnDenom);
     }
 
     /**
@@ -111,11 +120,21 @@ contract ERC20RelayerForwarder is Ownable {
         bytes calldata _encodedPayload,
         address _erc20Address
     ) external {
-        require(address(reputation) != address(0), "ERC20RelayerForwarder: reputation contract must be set to relay calls");
+        require(
+            address(reputation) != address(0),
+            "ERC20RelayerForwarder: reputation contract must be set to relay calls"
+        );
 
-        require(tx.origin == msg.sender, "ERC20RelayerForwarder: cannot relay calls from another contract");
+        require(
+            tx.origin == msg.sender,
+            "ERC20RelayerForwarder: cannot relay calls from another contract"
+        );
 
-        (uint256 fee, uint256 burn) = _relayCall(_applicationContract, _encodedPayload, _erc20Address);
+        (uint256 fee, uint256 burn) = _relayCall(
+            _applicationContract,
+            _encodedPayload,
+            _erc20Address
+        );
 
         address payable relayer = msg.sender;
         if (fee > 0) {
@@ -139,9 +158,15 @@ contract ERC20RelayerForwarder is Ownable {
         bytes[] calldata _encodedPayloads,
         address[] calldata _erc20Addresses
     ) external {
-        require(address(reputation) != address(0), "ERC20RelayerForwarder: reputation contract must be set to relay calls");
+        require(
+            address(reputation) != address(0),
+            "ERC20RelayerForwarder: reputation contract must be set to relay calls"
+        );
 
-        require(tx.origin == msg.sender, "ERC20RelayerForwarder: cannot relay calls from another contract");
+        require(
+            tx.origin == msg.sender,
+            "ERC20RelayerForwarder: cannot relay calls from another contract"
+        );
 
         require(
             _applicationContracts.length == _encodedPayloads.length,
@@ -153,8 +178,12 @@ contract ERC20RelayerForwarder is Ownable {
         );
 
         address payable relayer = msg.sender;
-        for (uint i = 0; i < _applicationContracts.length; i++) {
-            (uint256 fee, uint256 burn) = _relayCall(_applicationContracts[i], _encodedPayloads[i], _erc20Addresses[i]);
+        for (uint256 i = 0; i < _applicationContracts.length; i++) {
+            (uint256 fee, uint256 burn) = _relayCall(
+                _applicationContracts[i],
+                _encodedPayloads[i],
+                _erc20Addresses[i]
+            );
 
             if (fee > 0) {
                 IERC20 erc20Contract = IERC20(_erc20Addresses[i]);

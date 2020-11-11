@@ -23,7 +23,7 @@ async function startApp() {
   const filter = token.Transfer();
   console.log("filter 1:");
   console.dir(filter);
-  filter.new({ toBlock: "latest" }, (error, result) => {
+  filter.new({toBlock: "latest"}, (error, result) => {
     // result null <BigNumber ...> filterId
   });
 

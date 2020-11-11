@@ -130,7 +130,7 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
       }
     }
     for (
-      var r = { b: 8, t: 9, n: 10, v: 11, f: 12, r: 13 },
+      var r = {b: 8, t: 9, n: 10, v: 11, f: 12, r: 13},
         n = [],
         p = 0,
         d = a.length;
@@ -180,10 +180,10 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
           .getPropertyValue("white-space"));
     var p = l && "pre" === l.substring(0, 3);
     m(a);
-    return { a: h.join("").replace(/\n$/, ""), c: t };
+    return {a: h.join("").replace(/\n$/, ""), c: t};
   }
   function B(a, m, e, h) {
-    m && ((a = { a: m, d: a }), e(a), h.push.apply(h, a.e));
+    m && ((a = {a: m, d: a}), e(a), h.push.apply(h, a.e));
   }
   function x(a, m) {
     function e(a) {
@@ -564,7 +564,7 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
     ["in.tag"]
   );
   k(x([], [["atv", /^[\S\s]+/]]), ["uq.val"]);
-  k(u({ keywords: F, hashComments: !0, cStyleComments: !0, types: K }), [
+  k(u({keywords: F, hashComments: !0, cStyleComments: !0, types: K}), [
     "c",
     "cc",
     "cpp",
@@ -572,7 +572,7 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
     "cyc",
     "m",
   ]);
-  k(u({ keywords: "null,true,false" }), ["json"]);
+  k(u({keywords: "null,true,false"}), ["json"]);
   k(
     u({
       keywords: H,
@@ -583,8 +583,8 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
     }),
     ["cs"]
   );
-  k(u({ keywords: G, cStyleComments: !0 }), ["java"]);
-  k(u({ keywords: v, hashComments: !0, multiLineStrings: !0 }), [
+  k(u({keywords: G, cStyleComments: !0}), ["java"]);
+  k(u({keywords: v, hashComments: !0, multiLineStrings: !0}), [
     "bsh",
     "csh",
     "sh",
@@ -617,7 +617,7 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
     }),
     ["rb"]
   );
-  k(u({ keywords: w, cStyleComments: !0, regexLiterals: !0 }), ["js"]);
+  k(u({keywords: w, cStyleComments: !0, regexLiterals: !0}), ["js"]);
   k(
     u({
       keywords:
@@ -635,7 +635,7 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
     var h = document.createElement("PRE");
     h.innerHTML = a;
     e && D(h, e);
-    E({ g: m, i: e, h: h });
+    E({g: m, i: e, h: h});
     return h.innerHTML;
   };
   window.prettyPrint = function (a) {
@@ -687,7 +687,7 @@ window.PR_SHOULD_USE_CONTINUATION = !0;
                 ? +b[1]
                 : !0
               : !1) && D(n, b),
-            (d = { g: k, h: n, i: b }),
+            (d = {g: k, h: n, i: b}),
             E(d));
         }
       }
