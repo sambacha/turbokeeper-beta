@@ -1,0 +1,18 @@
+{
+  "summary": {
+    "title": "TurboKeeper Threat Model",
+    "owner": "s.bacha",
+    "description": "Turbo Keeper is a decentralized relay network in which concensus is achieved based upon a round-robin leader election system."
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [
+      {
+        "title": "model1",
+        "thumbnail": "./public/content/images/thumbnail.jpg",
+        "id": 0
+      }
+    ],
+    "reviewer": "sam b."
+  }
+}
