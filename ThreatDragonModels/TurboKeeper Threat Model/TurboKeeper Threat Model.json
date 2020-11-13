@@ -1,0 +1,155 @@
+{
+  "summary": {
+    "title": "TurboKeeper Threat Model",
+    "owner": "s.bacha",
+    "description": "Turbo Keeper is a decentralized relay network in which concensus is achieved based upon a round-robin leader election system."
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [
+      {
+        "title": "model1",
+        "thumbnail": "./public/content/images/thumbnail.jpg",
+        "id": 0,
+        "diagramJson": {
+          "cells": [
+            {
+              "type": "tm.Process",
+              "size": {
+                "width": 100,
+                "height": 100
+              },
+              "position": {
+                "x": 200,
+                "y": 81
+              },
+              "angle": 0,
+              "id": "d1be6d39-eb5d-4d6f-a7f0-b010f9e9dc56",
+              "z": 1,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "process 0"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Actor",
+              "size": {
+                "width": 160,
+                "height": 80
+              },
+              "position": {
+                "x": 247,
+                "y": 373
+              },
+              "angle": 0,
+              "id": "cb712537-a029-4714-a9e5-e03bb2829106",
+              "z": 2,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "actor 1"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Actor",
+              "size": {
+                "width": 160,
+                "height": 80
+              },
+              "position": {
+                "x": 70,
+                "y": 267
+              },
+              "angle": 0,
+              "id": "b7092447-c6d7-4656-bbe3-fbdc18ac21ec",
+              "z": 3,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "actor 2"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Store",
+              "size": {
+                "width": 160,
+                "height": 80
+              },
+              "position": {
+                "x": 372,
+                "y": 185
+              },
+              "angle": 0,
+              "id": "cf817ba4-b0bd-44da-ad10-99be1a839fe5",
+              "z": 4,
+              "hasOpenThreats": false,
+              "attrs": {
+                ".element-shape": {
+                  "class": "element-shape hasNoOpenThreats isInScope"
+                },
+                "text": {
+                  "text": "store 3"
+                },
+                ".element-text": {
+                  "class": "element-text hasNoOpenThreats isInScope"
+                }
+              }
+            },
+            {
+              "type": "tm.Boundary",
+              "smooth": true,
+              "source": {
+                "x": 30,
+                "y": 20
+              },
+              "target": {
+                "x": 390,
+                "y": 307
+              },
+              "vertices": [
+                {
+                  "x": 182,
+                  "y": 140
+                },
+                {
+                  "x": 259,
+                  "y": 284
+                }
+              ],
+              "id": "6707e50e-f3cc-4f80-a44d-29932558c2df",
+              "z": 5,
+              "attrs": {}
+            }
+          ]
+        },
+        "size": {
+          "height": 590,
+          "width": 790
+        }
+      }
+    ],
+    "reviewer": "sam b."
+  }
+}
