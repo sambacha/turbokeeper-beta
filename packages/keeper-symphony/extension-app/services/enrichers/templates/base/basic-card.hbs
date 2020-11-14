@@ -1,0 +1,26 @@
+<messageML>
+  <card 
+  class="barStyle"
+  data-icon-src="{{icon}}"
+  {{#if tempoAccent}}
+    data-accent-color="tempo-bg-color--{{tempoAccent}}"
+  {{/if}}
+  >
+    <header>
+      {{> (headerPartial) header.details}}
+    </header>
+    {{#if body }}
+      <body>
+        {{> (bodyPartial) body.details}}
+        <div style="margin-top: 8px">
+          {{#if body.buttons }}
+            {{#each body.buttons}}
+              {{> action-button this }}
+            {{/each}}
+            <p style="padding: 7px;"> </p>
+          {{/if}}
+        </div>
+      </body>
+    {{/if}}
+  </card>
+</messageML>

@@ -1,0 +1,95 @@
+// FONTS
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
+// $font-family: "SymphonyLato", "Lato", "Segoe UI", "Helvetica Neue", "Verdana", "Arial", sans-serif;
+$font-family: 'Lato', sans-serif;
+$font-grey: #4d4d4d;
+$heading-font-family-bold: Lato-Bold;
+$heading-5: #b2b2b2;
+$color-main-text: #2f3237;
+
+html, body, textarea {
+  font-family: $font-family;
+  color: $font-grey;
+  font-style: normal;
+  font-weight: normal;
+}
+
+p {
+  margin-block-start: 5px;
+  margin-block-end: 5px;
+}
+
+a {
+  color: #0962f1;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  color: $color-main-text;
+}
+
+/** SYMPHONY LATO **/
+/* Webfont: Lato-Regular */
+@font-face {
+  font-family: 'SymphonyLato';
+  src: url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Regular.eot");
+  /* IE9 Compact Modes */
+  src:
+    url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Regular.eot?#iefix")
+    format("embedded-opentype"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Regular.woff2")
+    format("woff2"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Regular.woff")
+    format("woff"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Regular.ttf")
+    format("truetype");
+  font-style: normal;
+  font-weight: normal;
+  text-rendering: optimizeLegibility;
+}
+
+/* Webfont: Lato-Italic */
+@font-face {
+  font-family: 'SymphonyLato';
+  src: url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Italic.eot");
+  /* IE9 Compat Modes */
+  src:
+    url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Italic.eot?#iefix")
+    format("embedded-opentype"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Italic.woff2")
+    format("woff2"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Italic.woff")
+    format("woff"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Italic.ttf")
+    format("truetype");
+  font-style: italic;
+  font-weight: normal;
+  text-rendering: optimizeLegibility;
+}
+
+/* Webfont: Lato-Bold */
+@font-face {
+  font-family: 'SymphonyLato';
+  src: url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Bold.eot");
+  /* IE9 Compat Modes */
+  src:
+    url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Bold.eot?#iefix")
+    format("embedded-opentype"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Bold.woff2")
+    format("woff2"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Bold.woff")
+    format("woff"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-Bold.ttf")
+    format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  text-rendering: optimizeLegibility;
+}
+
+/* Webfont: Lato-BoldItalic */
+@font-face {
+  font-family: 'SymphonyLato';
+  src: url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-BoldItalic.eot");
+  /* IE9 Compat Modes */
+  src:
+    url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-BoldItalic.eot?#iefix")
+    format("embedded-opentype"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-BoldItalic.woff2")
+    format("woff2"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-BoldItalic.woff")
+    format("woff"), url("https://symphony.com/resources/api/v2.0/fonts/lato/Lato-BoldItalic.ttf")
+    format("truetype");
+  font-style: italic;
+  font-weight: 700;
+  text-rendering: optimizeLegibility;
+}

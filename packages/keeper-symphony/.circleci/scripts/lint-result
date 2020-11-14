@@ -1,0 +1,15 @@
+#!/bin/env bashs -x
+set -o nounset
+set -o errexit
+set -o pipefail
+
+RESULT=$?
+
+if [ $RESULT != 0 ];
+then
+  echo 'Lint failed'
+  exit 1
+else
+   echo 'Lint passed'
+   exit 0
+fi

@@ -1,0 +1,121 @@
+version: 2
+
+defaults: &defaults
+  docker:
+  - image: circleci/node:latest
+  working_directory: ~/project
+
+jobs:
+  lint_and_test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+           - v1-dependencies-{{ checksum "package.json" }}
+           - v1-dependencies-
+      - run:
+          name: Update Token'
+          command: |
+            sudo apt-get install -qq -y gettext
+            envsubst < .circleci/templates/package.json.tpl > ./package.json
+            cat ./package.json
+      - run:
+          name: Dependencies Install
+          command: |
+           yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      # - run:
+      #     name: Lint
+      #     command: |
+      #       yarn run lint
+      - run:
+          name: Test package
+          command: |
+            yarn test
+
+      - run:
+          name: Run Coverage
+          command: |
+            yarn test:coverage || true
+
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .circleci
+            - coverage
+            - test-report.xml
+
+  sonarqube_analysis:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+
+      - run:
+          name: SonarQube Analysis Dependencies
+          command: |
+            sudo apt-get install -qq -y gettext
+
+            curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492-linux.zip \
+              -o sonar-scanner-cli-3.3.0.1492-linux.zip
+            unzip sonar-scanner-cli-3.3.0.1492-linux.zip
+
+            envsubst < .circleci/templates/sonar-project.properties.tpl > sonar-project.properties
+
+            envsubst < .circleci/templates/sonar-scanner.properties.tpl > sonar-scanner-3.3.0.1492-linux/conf/sonar-scanner.properties
+      - run:
+          name: Run SonarQube Analysis
+          command: |
+            chmod +x ./sonar-scanner-3.3.0.1492-linux/bin/sonar-scanner
+
+            ./sonar-scanner-3.3.0.1492-linux/bin/sonar-scanner
+      - run:
+          name: Get Test Result
+          command: |
+            source ./.circleci/scripts/test-result
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+          - .circleci
+
+  publish:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Publish package
+          command: |
+            echo "npm run publish --access private || true"
+
+workflows:
+  version: 2
+  weakly_code_analysis:
+    triggers:
+      - schedule:
+          cron: "0 0 * * 0"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - lint_and_test
+      - sonarqube_analysis:
+          requires:
+            - lint_and_test
+
+  check_package:
+    jobs:
+      - lint_and_test
+      - publish:
+          type: approval
+          requires:
+            - lint_and_test
+          filters:
+            branches:
+              only: develop

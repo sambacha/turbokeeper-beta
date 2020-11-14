@@ -1,0 +1,14 @@
+{
+  "applications": [
+    {
+      "type": "sandbox",
+      "id": "templateapp",
+      "name": "Template",
+      "blurb": "This is template integration app, using React Lib!",
+      "publisher": "Symphony",
+      "url": "https://localhost:4000/controller.html",
+      "domain": "localhost",
+      "iconUrl": "https://localhost:4000/assets/favicon.png"
+    }
+  ]
+}

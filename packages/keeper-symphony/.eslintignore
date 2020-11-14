@@ -1,0 +1,8 @@
+/dist/*
+/node_modules/*
+.circleci/*
+.docker/*
+/coverage/*
+/scripts/*
+/styleguide/*
+renderer.js

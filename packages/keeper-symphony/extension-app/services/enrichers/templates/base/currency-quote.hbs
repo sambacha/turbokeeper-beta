@@ -1,0 +1,49 @@
+{{#> information}}
+  {{#*inline "overrideHeader"}}
+    <p>Exchange rate: {{message.header.from_name}} to {{message.header.to_name}}</p>
+      <div style="display: flex; align-items: center; margin-top: 10px;">
+          <div style="background-color: #CDDAF1;
+              padding: 7px 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 175px;
+              ">
+            {{#> flag message.header.from_flag}}
+            {{/flag}}
+            <p style="
+            color: black;
+            margin: 1px 10px;
+            background-color: transparent;
+            ">1</p>
+            <b style="color: #4f4f4f96;
+            background-color: transparent;">{{message.header.from}}</b>
+          </div>
+          <div style="background: #EDB1FA;
+              padding: 7px 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 175px;">
+            {{#> flag message.header.to_flag}}
+            {{/flag}}
+            <p style="
+            color: black;
+            margin: 1px 10px;
+            background-color: transparent;
+              ">{{message.header.rate}}</p>
+            <b style="color: #4f4f4f96;
+            background-color: transparent;">{{message.header.to}}</b>
+          </div>
+      </div>
+      <div style="margin-top: 8px;">
+          <div style="color: #6a707c;">
+            <p>Offer available for a time period only</p>
+          </div>
+          {{#each message.buttons}}
+            {{> action-button this }}
+          {{/each}}
+      </div>
+  {{/inline}}
+{{/information}}
+
