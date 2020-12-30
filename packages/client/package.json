@@ -1,7 +1,7 @@
 {
   "name": "turbokeeper-client",
   "version": "0.5.0",
-  "description": "Client package for integrating with the Surrogeth network.",
+  "description": "Client package for integrating with the TurboKeeper network.",
   "main": "src/index.js",
   "scripts": {
     "test": "./node_modules/.bin/jest",

@@ -1,6 +1,6 @@
 # turbokeeper-client
 
-turbokeeper-client is a lightweight JavaScript library used for interacting with the surrogeth system. It's designed to be easy for mixers or wallets to integrate quickly.
+turbokeeper-client is a lightweight JavaScript library used for interacting with the turbokeeper system. It's designed to be easy for mixers or wallets to integrate quickly.
 
 ## Installation
 

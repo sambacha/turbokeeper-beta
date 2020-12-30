@@ -51,7 +51,7 @@ First, make sure you've set up a proper `.env` file.
 
 The relayer is deployed as a single Docker container. To start, check out the [Docker docs](https://docs.docker.com) and install Docker.
 
-Once Docker's been installed, `cd` to `surrogethd` wherever you've cloned this repository and build the Dockerfile:
+Once Docker's been installed, `cd` to `turbokeeperd` wherever you've cloned this repository and build the Dockerfile:
 
 ```
 $ docker build .

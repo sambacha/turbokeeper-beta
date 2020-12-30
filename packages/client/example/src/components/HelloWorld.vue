@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import {TurboKeeperClient} from "surrogeth-client";
+import {TurboKeeperClient} from "turbokeeper-client";
 import {ethers} from "ethers";
 
 export default {
@@ -19,7 +19,7 @@ export default {
 
   data() {
     return {
-      surrogethClient: TurboKeeperClient,
+      turbokeeperClient: TurboKeeperClient,
       relayer: null,
     };
   },
