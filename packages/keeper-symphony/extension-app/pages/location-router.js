@@ -1,14 +1,14 @@
-import React from 'react';
-import ExampleModal from 'modals/example-modal';
-import MainPageContainer from './main-page/container';
-import CurrencyQuoteModal from '../modals/currency-quote';
-import { MODAL_IDS } from '../services/enrichers/entities';
+import React from "react";
+import ExampleModal from "modals/example-modal";
+import MainPageContainer from "./main-page/container";
+import CurrencyQuoteModal from "../modals/currency-quote";
+import {MODAL_IDS} from "../services/enrichers/entities";
 
-const INNER_QUERY = 'queryObj';
+const INNER_QUERY = "queryObj";
 
 function getInnerQuery(query) {
   if (!query) {
-    return { page: 'app' };
+    return {page: "app"};
   }
 
   const part = query.split(`${INNER_QUERY}=`);
@@ -17,12 +17,12 @@ function getInnerQuery(query) {
 }
 
 function route() {
-  const currentQuery = window.location.href.split('?')[1];
+  const currentQuery = window.location.href.split("?")[1];
   const queryObj = getInnerQuery(currentQuery);
-  const currentPage = queryObj.page || 'app';
+  const currentPage = queryObj.page || "app";
   switch (currentPage) {
-    case 'config':
-    case 'app':
+    case "config":
+    case "app":
       return <MainPageContainer />;
     case MODAL_IDS.EXAMPLE_MODAL.entity:
       return <ExampleModal data={queryObj.data.entityData} />;

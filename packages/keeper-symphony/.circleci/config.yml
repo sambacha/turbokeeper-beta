@@ -2,7 +2,7 @@ version: 2
 
 defaults: &defaults
   docker:
-  - image: circleci/node:latest
+    - image: circleci/node:latest
   working_directory: ~/project
 
 jobs:
@@ -12,8 +12,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-           - v1-dependencies-{{ checksum "package.json" }}
-           - v1-dependencies-
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run:
           name: Update Token'
           command: |
@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Dependencies Install
           command: |
-           yarn install
+            yarn install
       - save_cache:
           paths:
             - node_modules
@@ -81,7 +81,7 @@ jobs:
       - persist_to_workspace:
           root: ~/project
           paths:
-          - .circleci
+            - .circleci
 
   publish:
     <<: *defaults

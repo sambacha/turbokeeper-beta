@@ -1,4 +1,3 @@
-
 [![CodeFactor](https://www.codefactor.io/repository/github/christronyxyocum/tronitor/badge)](https://www.codefactor.io/repository/github/christronyxyocum/tronitor) [![Travis (.org) branch](https://img.shields.io/travis/rust-lang/rust/master.svg?logo=travis)](https://travis-ci.org/christronyxyocum/tronitor) [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/christronyxyocum/tronitor/blob/develop/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/christronyxyocum/tronitor.svg)](http://isitmaintained.com/project/christronyxyocum/tronitor "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/christronyxyocum/tronitor.svg)](http://isitmaintained.com/project/christronyxyocum/tronitor "Percentage of issues still open")
 
 A bash script to work with [UptimeRobot](https://uptimerobot.com), [StatusCake](https://www.statuscake.com), and [HealthChecks.io](https://healthchecks.io) monitors via their respective APIs. It checks to make sure that the API key, and username for StatusCake, that you provided is valid before performing any requested operations.
@@ -19,7 +18,6 @@ It is recommended that you also install the `JQ` package as the script uses it t
 jq='true'
 ```
 
-
 #### Sample output using JQ:
 
 ![JQ True](/Images/jq_sample.png)
@@ -28,7 +26,6 @@ jq='true'
 
 ![JQ False](/Images/no_jq_sample.png)
 
-
 :warning: **NOTE:** You CAN get away with just grabbing a copy of the `tronitor.sh` script itself, but the monitor creation functionality will not work as it depends on the included template files in the repository.
 
 The script stores the API keys, and username for StatusCake, for up to all three providers so that you do not need multiple copies of the script to work with each of the different providers.
@@ -36,15 +33,18 @@ The script stores the API keys, and username for StatusCake, for up to all three
 The first time that you run the script for a specific monitor it will alert you that the API Key, etc. are missing and prompt you to input them:
 
 ### UptimeRobot
+
 ![UptimeRobot User Data Prompt](/Images/ur_user_data.png)
 
 ### StatusCake
+
 ![StatusCake User Data Prompt](/Images/sc_user_data.png)
 
 ### Healthchecks.io
+
 ![Healthchecks User Data Prompt](/Images/hc_user_data.png)
 
-:warning: **NOTE:** If you are running your own, self-hosted version of the Healthchecks.io application, you will need to modify the `healthchecksDomain` variable on `line 18` of the  `tronitor.sh` script with the domain name that you're hosting the application with.
+:warning: **NOTE:** If you are running your own, self-hosted version of the Healthchecks.io application, you will need to modify the `healthchecksDomain` variable on `line 18` of the `tronitor.sh` script with the domain name that you're hosting the application with.
 
 You can also simply open the script with your favorite text editor and add your provider's API key, and, if you're using StatusCake, your account username.
 
@@ -70,6 +70,7 @@ tronyx@suladan:~/tronitor$ ./tronitor.sh -m hc -l
 ```
 
 ## Examples
+
 ### Get account statistics
 
 Display basic statistics for your account:
@@ -240,7 +241,6 @@ Pausing Tautulli:
 ```
 
 :warning: **NOTE:** Healthchecks.io works with cronjobs so, unless you disable your cronjobs for the HC.io monitors, or work with the created lock file, all paused monitors will become active again the next time they receive a ping. Tronitor creates a lock file, `/tmp/tronitor/healthchecks.lock`, so that you can modify your existing HC.io script to check for the lock file and not send pings if it is present.
-
 
 ### Pause specific monitors
 

@@ -1,9 +1,12 @@
 // This is responsible to create the mock server.
-const jsonServer = require('json-server');
-const Axios = require('axios');
+const jsonServer = require("json-server");
+const Axios = require("axios");
 const {
-  generateDemoInfo, getBotRooms, mockInstances, initMockNotifications,
-} = require('./mock-file');
+  generateDemoInfo,
+  getBotRooms,
+  mockInstances,
+  initMockNotifications,
+} = require("./mock-file");
 
 const server = jsonServer.create();
 const middlewares = jsonServer.defaults();
@@ -22,16 +25,19 @@ function send(callback, delay = MOCK_DELAY) {
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
 server.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header("Access-Control-Allow-Origin", "*");
   res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept',
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
   );
   next();
 });
 
-server.post('/api/parser', async (req, res) => {
-  const payload = await Axios.post('https://renderer-tool.app.symphony.com/api/parser', req.body);
+server.post("/api/parser", async (req, res) => {
+  const payload = await Axios.post(
+    "https://renderer-tool.app.symphony.com/api/parser",
+    req.body
+  );
   res.json(payload.data).status(200).end();
 });
 
@@ -42,43 +48,43 @@ server.post('/api/parser', async (req, res) => {
   It can - and should - be deleted when developing your own integration.
 */
 // Project specific APIs
-server.get('/v1/sym/rooms', (req, res) => {
-  console.log('Get Bot Rooms!');
+server.get("/v1/sym/rooms", (req, res) => {
+  console.log("Get Bot Rooms!");
   send(() => res.jsonp(getBotRooms()));
 });
 
-server.get('/v1/sym/bot-info', (req, res) => {
-  send(() => res.jsonp({ username: 'pagerduty_bot' }));
+server.get("/v1/sym/bot-info", (req, res) => {
+  send(() => res.jsonp({username: "pagerduty_bot"}));
 });
 
-server.post('/application/authenticate', (req, res) => {
+server.post("/application/authenticate", (req, res) => {
   res.sendStatus(200);
 });
 
-server.post('/application/tokens/validate', (req, res) => {
+server.post("/application/tokens/validate", (req, res) => {
   res.sendStatus(200);
 });
 
-server.post('/application/jwt/validate', (req, res) => {
+server.post("/application/jwt/validate", (req, res) => {
   res.sendStatus(200);
 });
 
 server.listen(3000, () => {
-  console.log('JSON Server is running');
+  console.log("JSON Server is running");
 });
 
 // --- Instances
-server.get('/v1/instances', (req, res) => {
+server.get("/v1/instances", (req, res) => {
   send(() => res.jsonp(mockInstances));
 });
 
 // --- Notifications
 const mockNotifications = initMockNotifications;
-server.get('/v1/notifications', (req, res) => {
+server.get("/v1/notifications", (req, res) => {
   send(() => res.jsonp(mockNotifications));
 });
 
-server.post('/v1/notifications', (req, res) => {
+server.post("/v1/notifications", (req, res) => {
   const newId = `${mockNotifications.length + 1}`;
   mockNotifications.push({
     instance_id: req.body.instance_id,
@@ -89,8 +95,10 @@ server.post('/v1/notifications', (req, res) => {
   send(() => res.jsonp(newId));
 });
 
-server.put('/v1/notifications/:id', (req, res) => {
-  const editIndex = mockNotifications.findIndex(el => el.id === req.params.id);
+server.put("/v1/notifications/:id", (req, res) => {
+  const editIndex = mockNotifications.findIndex(
+    (el) => el.id === req.params.id
+  );
   if (editIndex < 0) {
     send(() => res.sendStatus(404));
   } else {
@@ -103,12 +111,17 @@ server.put('/v1/notifications/:id', (req, res) => {
   }
 });
 
-server.delete('/v1/notifications/:id', (req, res) => {
-  const indexOfDelete = mockNotifications.findIndex(el => el.id === req.params.id);
+server.delete("/v1/notifications/:id", (req, res) => {
+  const indexOfDelete = mockNotifications.findIndex(
+    (el) => el.id === req.params.id
+  );
   if (indexOfDelete < 0) {
     send(() => res.sendStatus(404));
   }
-  mockNotifications.slice(mockNotifications.findIndex(el => el.id === req.params.id), 1);
+  mockNotifications.slice(
+    mockNotifications.findIndex((el) => el.id === req.params.id),
+    1
+  );
   console.log(mockNotifications);
   send(() => res.sendStatus(200));
 });

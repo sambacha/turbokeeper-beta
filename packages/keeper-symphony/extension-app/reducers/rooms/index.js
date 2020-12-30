@@ -1,8 +1,4 @@
-import {
-  GET_ROOMS,
-  GET_ROOMS_SUCCESS,
-  GET_ROOMS_FAILURE,
-} from './types';
+import {GET_ROOMS, GET_ROOMS_SUCCESS, GET_ROOMS_FAILURE} from "./types";
 
 const INITIAL_STATE = {
   services: null,
@@ -22,7 +18,7 @@ export default function (state = INITIAL_STATE, action) {
     case GET_ROOMS_SUCCESS:
       return {
         ...state,
-        rooms: action.payload.map(({ stream_id, name }) => ({
+        rooms: action.payload.map(({stream_id, name}) => ({
           threadId: stream_id,
           name,
         })),

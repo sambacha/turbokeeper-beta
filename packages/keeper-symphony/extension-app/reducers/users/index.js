@@ -1,5 +1,5 @@
-import { RestClient } from 'symphony-bdk-ui-toolkit';
-import { simplifyRooms } from 'utils/helpers/help-functions';
+import {RestClient} from "symphony-bdk-ui-toolkit";
+import {simplifyRooms} from "utils/helpers/help-functions";
 import {
   JWT_AUTH_SUCCESS,
   JWT_AUTH_FAILURE,
@@ -9,12 +9,12 @@ import {
   GET_ALLOWED_USER_ROOMS_FAILURE,
   GET_USER_CONTACTS,
   GET_USER_CONTACTS_ERROR,
-} from './types';
+} from "./types";
 
 const INITIAL_STATE = {
   allUserRooms: null,
   allowedUserRooms: null,
-  jwt: 'loading',
+  jwt: "loading",
 };
 
 export default function (state = INITIAL_STATE, action) {

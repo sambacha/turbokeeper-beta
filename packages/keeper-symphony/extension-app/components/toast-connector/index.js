@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { ToasterConsumer } from 'symphony-bdk-ui-toolkit';
-import { connect } from 'react-redux';
+import React, {useState, useEffect} from "react";
+import PropTypes from "prop-types";
+import {ToasterConsumer} from "symphony-bdk-ui-toolkit";
+import {connect} from "react-redux";
 
 const ToastConnector = (props) => {
-  const {
-    type, message,
-  } = props;
+  const {type, message} = props;
 
   const [hasMessage, setHasMessage] = useState(false);
 
@@ -20,7 +18,7 @@ const ToastConnector = (props) => {
     <ToasterConsumer>
       {(context) => {
         if (hasMessage) {
-          context.showToast({ message, type });
+          context.showToast({message, type});
           setHasMessage(false);
         }
         return null;
@@ -41,7 +39,7 @@ ToastConnector.defaultProps = {
 
 const mapDispatchToProps = () => ({});
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   message: state.toast.message,
   type: state.toast.type,
 });

@@ -7,8 +7,8 @@ rules:
   react/jsx-filename-extension:
     - 1
     - extensions:
-      - .js
-      - .jsx
+        - .js
+        - .jsx
   no-nested-ternary: off
   import/no-extraneous-dependencies: off
   jsx-a11y/label-has-for: off
@@ -22,11 +22,11 @@ settings:
   import/resolver:
     node:
       paths:
-      - extension-app
-      - extension-app/components
-      - extension-app/pages
-      - extension-app/assets
-      - extension-app/sass
-      - extension-app/reducers
-      - extension-app/services
-      - extension-app/utils
+        - extension-app
+        - extension-app/components
+        - extension-app/pages
+        - extension-app/assets
+        - extension-app/sass
+        - extension-app/reducers
+        - extension-app/services
+        - extension-app/utils

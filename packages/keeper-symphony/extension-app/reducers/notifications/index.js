@@ -11,7 +11,7 @@ import {
   PUT_NOTIFICATION,
   PUT_NOTIFICATION_SUCCESS,
   PUT_NOTIFICATION_FAILURE,
-} from './types';
+} from "./types";
 
 const INITIAL_STATE = {
   notifications: null,
@@ -33,7 +33,7 @@ export default function (state = INITIAL_STATE, action) {
     case GET_NOTIFICATIONS_SUCCESS:
       return {
         ...state,
-        notifications: action.payload.map(el => ({
+        notifications: action.payload.map((el) => ({
           name: el.name,
           id: el.id,
           isEditable: el.is_editable,
@@ -45,10 +45,7 @@ export default function (state = INITIAL_STATE, action) {
     case POST_NOTIFICATION_SUCCESS:
       return {
         ...state,
-        notifications: [
-          ...state.notifications,
-          action.payload,
-        ],
+        notifications: [...state.notifications, action.payload],
         loading: false,
         error: null,
       };
@@ -71,7 +68,9 @@ export default function (state = INITIAL_STATE, action) {
     case DELETE_NOTIFICATIONS_SUCCESS:
       return {
         ...state,
-        notifications: state.notifications.filter(el => el.id !== action.payload),
+        notifications: state.notifications.filter(
+          (el) => el.id !== action.payload
+        ),
         loading: false,
         error: null,
       };

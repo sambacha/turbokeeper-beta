@@ -4,7 +4,7 @@ pragma solidity >=0.6.8;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol"; 
+import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 
 interface IController {
     function withdraw(address, uint256) external;
@@ -21,7 +21,7 @@ interface IController {
 
     function strategies(address) external view returns (address);
 }
- 
+
 interface Gauge {
     function deposit(uint256) external;
 
@@ -29,11 +29,11 @@ interface Gauge {
 
     function withdraw(uint256) external;
 }
- 
+
 interface Mintr {
     function mint(address) external;
 }
- 
+
 interface Uni {
     function swapExactTokensForTokens(
         uint256,
@@ -59,9 +59,13 @@ interface ICurveFi {
         uint256 min_mint_amount
     ) external;
 
-    function remove_liquidity_imbalance(uint256[4] calldata amounts, uint256 max_burn_amount) external;
+    function remove_liquidity_imbalance(
+        uint256[4] calldata amounts,
+        uint256 max_burn_amount
+    ) external;
 
-    function remove_liquidity(uint256 _amount, uint256[4] calldata amounts) external;
+    function remove_liquidity(uint256 _amount, uint256[4] calldata amounts)
+        external;
 
     function exchange(
         int128 from,
@@ -97,7 +101,9 @@ interface VoterProxy {
 
     function balanceOf(address _gauge) external view returns (uint256);
 
-    function withdrawAll(address _gauge, address _token) external returns (uint256);
+    function withdrawAll(address _gauge, address _token)
+        external
+        returns (uint256);
 
     function deposit(address _gauge, address _token) external;
 
@@ -112,17 +118,35 @@ contract StrategyCurveYVoterProxy {
     using Address for address;
     using SafeMath for uint256;
 
-    address public constant want = address(0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8);
-    address public constant crv = address(0xD533a949740bb3306d119CC777fa900bA034cd52);
-    address public constant uni = address(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
-    address public constant weth = address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2); // used for crv <> weth <> dai route
+    address public constant want = address(
+        0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8
+    );
+    address public constant crv = address(
+        0xD533a949740bb3306d119CC777fa900bA034cd52
+    );
+    address public constant uni = address(
+        0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+    );
+    address public constant weth = address(
+        0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
+    ); // used for crv <> weth <> dai route
 
-    address public constant dai = address(0x6B175474E89094C44Da98b954EedeAC495271d0F);
-    address public constant ydai = address(0x16de59092dAE5CcF4A1E6439D611fd0653f0Bd01);
-    address public constant curve = address(0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51);
+    address public constant dai = address(
+        0x6B175474E89094C44Da98b954EedeAC495271d0F
+    );
+    address public constant ydai = address(
+        0x16de59092dAE5CcF4A1E6439D611fd0653f0Bd01
+    );
+    address public constant curve = address(
+        0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51
+    );
 
-    address public constant gauge = address(0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1);
-    address public constant voter = address(0xF147b8125d2ef93FB6965Db97D6746952a133934);
+    address public constant gauge = address(
+        0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1
+    );
+    address public constant voter = address(
+        0xF147b8125d2ef93FB6965Db97D6746952a133934
+    );
 
     uint256 public keepCRV = 1000;
     uint256 public constant keepCRVMax = 10000;
@@ -228,7 +252,10 @@ contract StrategyCurveYVoterProxy {
     }
 
     function harvest() public virtual {
-        require(msg.sender == strategist || msg.sender == governance, "!authorized");
+        require(
+            msg.sender == strategist || msg.sender == governance,
+            "!authorized"
+        );
         VoterProxy(proxy).harvest(gauge);
         uint256 _crv = IERC20(crv).balanceOf(address(this));
         if (_crv > 0) {
@@ -244,7 +271,13 @@ contract StrategyCurveYVoterProxy {
             path[1] = weth;
             path[2] = dai;
 
-            Uni(uni).swapExactTokensForTokens(_crv, uint256(0), path, address(this), now.add(1800));
+            Uni(uni).swapExactTokensForTokens(
+                _crv,
+                uint256(0),
+                path,
+                address(this),
+                now.add(1800)
+            );
         }
         uint256 _dai = IERC20(dai).balanceOf(address(this));
         if (_dai > 0) {

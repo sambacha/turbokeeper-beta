@@ -1,6 +1,4 @@
-import {
-  GET_INSTANCES_FAILURE,
-} from '../instances/types';
+import {GET_INSTANCES_FAILURE} from "../instances/types";
 import {
   GET_NOTIFICATIONS_FAILURE,
   POST_NOTIFICATION_FAILURE,
@@ -9,11 +7,11 @@ import {
   DELETE_NOTIFICATIONS_SUCCESS,
   PUT_NOTIFICATION_SUCCESS,
   PUT_NOTIFICATION_FAILURE,
-} from '../notifications/types';
+} from "../notifications/types";
 
 const INITIAL_STATE = {
   message: null,
-  type: '',
+  type: "",
 };
 
 export default function (state = INITIAL_STATE, action) {
@@ -21,58 +19,58 @@ export default function (state = INITIAL_STATE, action) {
     case GET_INSTANCES_FAILURE:
       return {
         ...state,
-        message: 'Error fetching instances',
+        message: "Error fetching instances",
         error: action.payload,
-        type: 'error',
+        type: "error",
       };
     case GET_NOTIFICATIONS_FAILURE:
       return {
         ...state,
-        message: 'Error fetching notifications',
+        message: "Error fetching notifications",
         error: action.payload,
-        type: 'error',
+        type: "error",
       };
     case DELETE_NOTIFICATIONS_FAILURE:
       return {
         ...state,
-        message: 'Error deleting notification',
+        message: "Error deleting notification",
         error: action.payload,
-        type: 'error',
+        type: "error",
       };
     case POST_NOTIFICATION_FAILURE:
       return {
         ...state,
-        message: 'Error creating notification',
+        message: "Error creating notification",
         error: action.payload,
-        type: 'error',
+        type: "error",
       };
     case POST_NOTIFICATION_SUCCESS:
       return {
         ...state,
-        message: 'Notification created successfully',
+        message: "Notification created successfully",
         error: null,
-        type: 'success',
+        type: "success",
       };
     case DELETE_NOTIFICATIONS_SUCCESS:
       return {
         ...state,
-        message: 'Notification deleted successfully',
+        message: "Notification deleted successfully",
         error: null,
-        type: 'success',
+        type: "success",
       };
     case PUT_NOTIFICATION_SUCCESS:
       return {
         ...state,
-        message: 'Notification updated successfully',
+        message: "Notification updated successfully",
         error: null,
-        type: 'success',
+        type: "success",
       };
     case PUT_NOTIFICATION_FAILURE:
       return {
         ...state,
-        message: 'Error updating notification',
+        message: "Error updating notification",
         error: action.payload,
-        type: 'error',
+        type: "error",
       };
     default:
       return state;

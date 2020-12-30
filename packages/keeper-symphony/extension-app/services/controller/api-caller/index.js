@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 export default class ApiCaller {
   constructor(baseUrl) {
@@ -6,23 +6,18 @@ export default class ApiCaller {
   }
 
   authenticate(appId) {
-    return axios.post(
-      `${this.baseAuthUrl}/authenticate`,
-      { appId },
-    );
+    return axios.post(`${this.baseAuthUrl}/authenticate`, {appId});
   }
 
   validateTokens(appToken, symphonyToken, appId) {
-    return axios.post(
-      `${this.baseAuthUrl}/tokens/validate`,
-      { appToken, symphonyToken, appId },
-    );
+    return axios.post(`${this.baseAuthUrl}/tokens/validate`, {
+      appToken,
+      symphonyToken,
+      appId,
+    });
   }
 
   validateJwt(jwt) {
-    return axios.post(
-      `${this.baseAuthUrl}/jwt/validate`,
-      { jwt },
-    );
+    return axios.post(`${this.baseAuthUrl}/jwt/validate`, {jwt});
   }
 }

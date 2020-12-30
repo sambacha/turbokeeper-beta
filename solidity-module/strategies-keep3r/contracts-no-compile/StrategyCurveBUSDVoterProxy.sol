@@ -20,17 +20,35 @@ contract StrategyCurveBUSDVoterProxy {
     using Address for address;
     using SafeMath for uint256;
 
-    address public constant want = address(0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B);
-    address public constant crv = address(0xD533a949740bb3306d119CC777fa900bA034cd52);
-    address public constant uni = address(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
-    address public constant weth = address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2); // used for crv <> weth <> dai route
+    address public constant want = address(
+        0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B
+    );
+    address public constant crv = address(
+        0xD533a949740bb3306d119CC777fa900bA034cd52
+    );
+    address public constant uni = address(
+        0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+    );
+    address public constant weth = address(
+        0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
+    ); // used for crv <> weth <> dai route
 
-    address public constant dai = address(0x6B175474E89094C44Da98b954EedeAC495271d0F);
-    address public constant ydai = address(0xC2cB1040220768554cf699b0d863A3cd4324ce32);
-    address public constant curve = address(0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27);
+    address public constant dai = address(
+        0x6B175474E89094C44Da98b954EedeAC495271d0F
+    );
+    address public constant ydai = address(
+        0xC2cB1040220768554cf699b0d863A3cd4324ce32
+    );
+    address public constant curve = address(
+        0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27
+    );
 
-    address public constant gauge = address(0x69Fb7c45726cfE2baDeE8317005d3F94bE838840);
-    address public constant voter = address(0xF147b8125d2ef93FB6965Db97D6746952a133934);
+    address public constant gauge = address(
+        0x69Fb7c45726cfE2baDeE8317005d3F94bE838840
+    );
+    address public constant voter = address(
+        0xF147b8125d2ef93FB6965Db97D6746952a133934
+    );
 
     uint256 public keepCRV = 1000;
     uint256 public constant keepCRVMax = 10000;
@@ -136,7 +154,10 @@ contract StrategyCurveBUSDVoterProxy {
     }
 
     function harvest() public {
-        require(msg.sender == strategist || msg.sender == governance, "!authorized");
+        require(
+            msg.sender == strategist || msg.sender == governance,
+            "!authorized"
+        );
         IVoterProxy(proxy).harvest(gauge);
         uint256 _crv = IERC20(crv).balanceOf(address(this));
         if (_crv > 0) {
@@ -152,7 +173,13 @@ contract StrategyCurveBUSDVoterProxy {
             path[1] = weth;
             path[2] = dai;
 
-            Uni(uni).swapExactTokensForTokens(_crv, uint256(0), path, address(this), now.add(1800));
+            Uni(uni).swapExactTokensForTokens(
+                _crv,
+                uint256(0),
+                path,
+                address(this),
+                now.add(1800)
+            );
         }
         uint256 _dai = IERC20(dai).balanceOf(address(this));
         if (_dai > 0) {

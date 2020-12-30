@@ -1,18 +1,16 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, {useEffect} from "react";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 import {
   getNotifications,
   deleteNotification,
-} from 'reducers/notifications/actions';
-import { Loader, Box } from 'symphony-bdk-ui-toolkit';
-import NotificationManagePage from '.';
+} from "reducers/notifications/actions";
+import {Loader, Box} from "symphony-bdk-ui-toolkit";
+import NotificationManagePage from ".";
 
 const NotificationPageContainer = (props) => {
-  const {
-    loading, instances, actions, notifications,
-  } = props;
+  const {loading, instances, actions, notifications} = props;
 
   const firstLoading = !notifications && loading;
   const deleteLoading = notifications && loading;
@@ -35,7 +33,7 @@ const NotificationPageContainer = (props) => {
     <NotificationManagePage
       notifications={notifications}
       deleteLoading={deleteLoading}
-      deleteHandler={id => actions.deleteNotification(id)}
+      deleteHandler={(id) => actions.deleteNotification(id)}
       instances={instances}
     />
   );
@@ -53,19 +51,16 @@ NotificationPageContainer.defaultProps = {
   instances: null,
   notifications: null,
 };
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(
-    { getNotifications, deleteNotification },
-    dispatch,
-  ),
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators({getNotifications, deleteNotification}, dispatch),
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   loading: state.notifications.loading,
   notifications: state.notifications.notifications,
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(NotificationPageContainer);

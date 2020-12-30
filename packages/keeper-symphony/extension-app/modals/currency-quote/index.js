@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from "react";
 import {
-  Text, Box, InputField, FormBox, FormGroup, Button,
-} from 'symphony-bdk-ui-toolkit';
-import { ExchangeAlt } from 'styled-icons/fa-solid';
-import styled from 'styled-components';
+  Text,
+  Box,
+  InputField,
+  FormBox,
+  FormGroup,
+  Button,
+} from "symphony-bdk-ui-toolkit";
+import {ExchangeAlt} from "styled-icons/fa-solid";
+import styled from "styled-components";
 
 const StyledExchangedIcon = styled(ExchangeAlt)`
   font-size: 16;
@@ -12,9 +17,9 @@ const StyledExchangedIcon = styled(ExchangeAlt)`
 
 const CurrencyQuoteModal = () => {
   const [value, setValue] = useState(null);
-  const inputError = value === null || value >= 1 ? null : 'error';
+  const inputError = value === null || value >= 1 ? null : "error";
   return (
-    <Box horizontal type="primary" align="center" style={{ height: '100%' }}>
+    <Box horizontal type="primary" align="center" style={{height: "100%"}}>
       <Box>
         <Text isTitle>How much would you like to buy?</Text>
       </Box>
@@ -23,7 +28,7 @@ const CurrencyQuoteModal = () => {
           <InputField
             type="number"
             value={value}
-            onChange={e => setValue(e.target.value)}
+            onChange={(e) => setValue(e.target.value)}
             label="Amount"
             errorMessage="The amount must be greater than one"
             inputState={inputError}
@@ -32,7 +37,7 @@ const CurrencyQuoteModal = () => {
         <Box horizontal align="end">
           <Button>
             <Box horizontal space={10}>
-              <Text style={{ fontWeight: 'inherit', color: 'inherit' }}>Buy</Text>
+              <Text style={{fontWeight: "inherit", color: "inherit"}}>Buy</Text>
               <StyledExchangedIcon size={16} />
             </Box>
           </Button>

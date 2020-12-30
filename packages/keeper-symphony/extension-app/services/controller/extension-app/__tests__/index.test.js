@@ -1,14 +1,13 @@
 /* global SYMPHONY */
-import '../../../../public/config';
-import { setupLinkPrefix, frontendURL } from 'utils/system/setup-url';
-import { showExtensionApp } from 'services/controller/extension-app';
+import "../../../../public/config";
+import {setupLinkPrefix, frontendURL} from "utils/system/setup-url";
+import {showExtensionApp} from "services/controller/extension-app";
 
-const { APP_ID, APP_TITLE, APP_ICON_NAME } = window.APP_CONFIG;
+const {APP_ID, APP_TITLE, APP_ICON_NAME} = window.APP_CONFIG;
 
-
-describe('Extension App Services', () => {
+describe("Extension App Services", () => {
   const showMock = jest.fn();
-  const TEMPLATE_URL = 'https://localhost:4000/template';
+  const TEMPLATE_URL = "https://localhost:4000/template";
 
   global.SYMPHONY = {
     services: {
@@ -18,39 +17,45 @@ describe('Extension App Services', () => {
     },
   };
 
-  it('Should subscribe to SYMPHONY modules and get default config if no override', () => {
+  it("Should subscribe to SYMPHONY modules and get default config if no override", () => {
     showExtensionApp();
-    expect(SYMPHONY.services.subscribe).toBeCalledWith('modules');
+    expect(SYMPHONY.services.subscribe).toBeCalledWith("modules");
     expect(showMock).toBeCalledWith(
       APP_ID,
-      { title: APP_TITLE, icon: `${frontendURL()}${setupLinkPrefix()}/assets/${APP_ICON_NAME}` },
+      {
+        title: APP_TITLE,
+        icon: `${frontendURL()}${setupLinkPrefix()}/assets/${APP_ICON_NAME}`,
+      },
       `${APP_ID}:controller`,
       `${frontendURL()}${setupLinkPrefix()}/app.html`,
-      { canFloat: true },
+      {canFloat: true}
     );
   });
 
-  it('Should subscribe to SYMPHONY modules and with override URL', () => {
+  it("Should subscribe to SYMPHONY modules and with override URL", () => {
     showExtensionApp(null, TEMPLATE_URL);
-    expect(SYMPHONY.services.subscribe).toBeCalledWith('modules');
+    expect(SYMPHONY.services.subscribe).toBeCalledWith("modules");
     expect(showMock).toBeCalledWith(
       APP_ID,
-      { title: APP_TITLE, icon: `${frontendURL()}${setupLinkPrefix()}/assets/${APP_ICON_NAME}` },
+      {
+        title: APP_TITLE,
+        icon: `${frontendURL()}${setupLinkPrefix()}/assets/${APP_ICON_NAME}`,
+      },
       `${APP_ID}:controller`,
       TEMPLATE_URL,
-      { canFloat: true },
+      {canFloat: true}
     );
   });
 
-  it('Should subscribe to SYMPHONY modules and with two override URLs', () => {
+  it("Should subscribe to SYMPHONY modules and with two override URLs", () => {
     showExtensionApp(null, TEMPLATE_URL, TEMPLATE_URL);
-    expect(SYMPHONY.services.subscribe).toBeCalledWith('modules');
+    expect(SYMPHONY.services.subscribe).toBeCalledWith("modules");
     expect(showMock).toBeCalledWith(
       APP_ID,
-      { title: APP_TITLE, icon: TEMPLATE_URL },
+      {title: APP_TITLE, icon: TEMPLATE_URL},
       `${APP_ID}:controller`,
       TEMPLATE_URL,
-      { canFloat: true },
+      {canFloat: true}
     );
   });
 });

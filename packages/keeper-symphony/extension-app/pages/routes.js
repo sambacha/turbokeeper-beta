@@ -1,27 +1,25 @@
 /* global SYMPHONY */
 
-import React, { useEffect, useState } from 'react';
-import Styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
-import {
-  BrowserRouter, Route, Switch, Redirect,
-} from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { setupLinkPrefix } from 'utils/system/setup-url';
-import { getJWTFromSymphony } from 'reducers/users/actions';
+import React, {useEffect, useState} from "react";
+import Styled, {ThemeProvider, createGlobalStyle} from "styled-components";
+import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import {setupLinkPrefix} from "utils/system/setup-url";
+import {getJWTFromSymphony} from "reducers/users/actions";
 import {
   THEME_TYPES,
   Loader,
   ToasterProvider,
   ModalProvider,
   ModalRoot,
-} from 'symphony-bdk-ui-toolkit';
-import ToastConnector from 'components/toast-connector';
-import { PROJECT_THEMES } from '../utils/themes/PROJECT_THEMES';
-import LocationRouter from './location-router';
-import MainPageContainer from './main-page/container';
-import CreateNotificationContainer from './create-notification/container';
+} from "symphony-bdk-ui-toolkit";
+import ToastConnector from "components/toast-connector";
+import {PROJECT_THEMES} from "../utils/themes/PROJECT_THEMES";
+import LocationRouter from "./location-router";
+import MainPageContainer from "./main-page/container";
+import CreateNotificationContainer from "./create-notification/container";
 
 const LINK_PREFIX = setupLinkPrefix();
 
@@ -37,25 +35,25 @@ const ContainerWrapper = Styled.div`
   margin: 0px 21px;
 `;
 
-const getFontSize = ({ theme }) => {
+const getFontSize = ({theme}) => {
   switch (theme.size) {
-    case 'xsmall':
-      return '12px';
-    case 'small':
-      return '13px';
-    case 'large':
-      return '17px';
+    case "xsmall":
+      return "12px";
+    case "small":
+      return "13px";
+    case "large":
+      return "17px";
     default:
-      return '14px';
+      return "14px";
   }
 };
 const GlobalChanger = createGlobalStyle`
   html {
-    font-size: ${props => getFontSize(props)};
+    font-size: ${(props) => getFontSize(props)};
   }
 
   body {
-    background-color: ${({ theme }) => theme.colors.mainbackground};
+    background-color: ${({theme}) => theme.colors.mainbackground};
   }
 `;
 
@@ -68,8 +66,8 @@ const Routes = (props) => {
       : false;
     setTheme(
       isDark
-        ? { ...PROJECT_THEMES[1], size: window.themeSize }
-        : { ...PROJECT_THEMES[0], size: window.themeSize },
+        ? {...PROJECT_THEMES[1], size: window.themeSize}
+        : {...PROJECT_THEMES[0], size: window.themeSize}
     );
     document.body.className = `symphony-external-app ${window.themeColor.toLowerCase()} ${
       window.themeSize
@@ -77,20 +75,21 @@ const Routes = (props) => {
   };
 
   useEffect(() => {
-    const { actions, jwtService } = props;
+    const {actions, jwtService} = props;
     actions.getJWTFromSymphony(jwtService);
   }, []);
 
   useEffect(() => {
-    const uiService = SYMPHONY.services.subscribe('ui');
+    const uiService = SYMPHONY.services.subscribe("ui");
 
-    uiService.listen('themeChangeV2', () => {
+    uiService.listen("themeChangeV2", () => {
       SYMPHONY.remote.hello().then((theme) => {
         const themeSize = theme.themeV2.size;
         const themeColor = theme.themeV2.name;
-        const appTheme = themeColor.toUpperCase() === THEME_TYPES.DARK
-          ? THEME_TYPES.DARK
-          : themeColor.toUpperCase() === THEME_TYPES.LIGHT
+        const appTheme =
+          themeColor.toUpperCase() === THEME_TYPES.DARK
+            ? THEME_TYPES.DARK
+            : themeColor.toUpperCase() === THEME_TYPES.LIGHT
             ? THEME_TYPES.LIGHT
             : THEME_TYPES.LIGHT;
         window.themeColor = appTheme;
@@ -102,11 +101,11 @@ const Routes = (props) => {
     setThemeProps();
   }, [window.themeColor, window.themeSize]);
 
-  const { jwt } = props;
+  const {jwt} = props;
   const Default = () => <Redirect to={`${LINK_PREFIX}/app.html`} />;
 
   if (jwt) {
-    if (jwt === 'loading') {
+    if (jwt === "loading") {
       return (
         <ThemeProvider theme={currentTheme}>
           <LoadContainer>
@@ -164,18 +163,15 @@ Routes.propTypes = {
 };
 
 Routes.defaultProps = {
-  jwt: 'loading',
+  jwt: "loading",
 };
 
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({ getJWTFromSymphony }, dispatch),
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators({getJWTFromSymphony}, dispatch),
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   jwt: state.user.jwt,
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Routes);
+export default connect(mapStateToProps, mapDispatchToProps)(Routes);

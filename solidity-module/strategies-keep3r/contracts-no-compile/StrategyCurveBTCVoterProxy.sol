@@ -20,16 +20,32 @@ contract StrategyCurveBTCVoterProxy {
     using Address for address;
     using SafeMath for uint256;
 
-    address public constant want = address(0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3);
-    address public constant crv = address(0xD533a949740bb3306d119CC777fa900bA034cd52);
-    address public constant uni = address(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
-    address public constant weth = address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2); // used for crv <> weth <> wbtc route
+    address public constant want = address(
+        0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3
+    );
+    address public constant crv = address(
+        0xD533a949740bb3306d119CC777fa900bA034cd52
+    );
+    address public constant uni = address(
+        0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+    );
+    address public constant weth = address(
+        0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
+    ); // used for crv <> weth <> wbtc route
 
-    address public constant wbtc = address(0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599);
-    address public constant curve = address(0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714);
+    address public constant wbtc = address(
+        0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599
+    );
+    address public constant curve = address(
+        0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714
+    );
 
-    address public constant gauge = address(0x705350c4BcD35c9441419DdD5d2f097d7a55410F);
-    address public constant voter = address(0xF147b8125d2ef93FB6965Db97D6746952a133934);
+    address public constant gauge = address(
+        0x705350c4BcD35c9441419DdD5d2f097d7a55410F
+    );
+    address public constant voter = address(
+        0xF147b8125d2ef93FB6965Db97D6746952a133934
+    );
 
     uint256 public keepCRV = 1000;
     uint256 public constant keepCRVMax = 10000;
@@ -140,7 +156,10 @@ contract StrategyCurveBTCVoterProxy {
     }
 
     function harvest() public {
-        require(msg.sender == strategist || msg.sender == governance, "!authorized");
+        require(
+            msg.sender == strategist || msg.sender == governance,
+            "!authorized"
+        );
         IVoterProxy(proxy).harvest(gauge);
         uint256 _crv = IERC20(crv).balanceOf(address(this));
         if (_crv > 0) {
@@ -156,7 +175,13 @@ contract StrategyCurveBTCVoterProxy {
             path[1] = weth;
             path[2] = wbtc;
 
-            Uni(uni).swapExactTokensForTokens(_crv, uint256(0), path, address(this), now.add(1800));
+            Uni(uni).swapExactTokensForTokens(
+                _crv,
+                uint256(0),
+                path,
+                address(this),
+                now.add(1800)
+            );
         }
         uint256 _wbtc = IERC20(wbtc).balanceOf(address(this));
         if (_wbtc > 0) {

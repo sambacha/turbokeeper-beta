@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, {useState} from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Text,
@@ -7,22 +7,22 @@ import {
   Button,
   ModalConsumer,
   DangerConfirmationModal,
-} from 'symphony-bdk-ui-toolkit';
-import { Link, Redirect } from 'react-router-dom';
-import { setupLinkPrefix } from 'utils/system/setup-url';
+} from "symphony-bdk-ui-toolkit";
+import {Link, Redirect} from "react-router-dom";
+import {setupLinkPrefix} from "utils/system/setup-url";
 
 const LINK_PREFIX = setupLinkPrefix();
 
 const columns = [
   {
-    header: 'Name',
-    accessor: 'name',
+    header: "Name",
+    accessor: "name",
     sortable: false,
   },
   {
-    header: 'Instance',
-    accessor: 'instance',
-    tooltip: 'This column is sortable!',
+    header: "Instance",
+    accessor: "instance",
+    tooltip: "This column is sortable!",
   },
   {
     sortable: false,
@@ -33,7 +33,7 @@ const columns = [
 ];
 
 const Confirmation = (props) => {
-  const { hideModal, deleteHandler } = props;
+  const {hideModal, deleteHandler} = props;
   return (
     <DangerConfirmationModal
       hideModal={hideModal}
@@ -49,31 +49,31 @@ const Confirmation = (props) => {
 };
 
 const NotificationManagePage = (props) => {
-  const {
-    notifications, instances, deleteLoading, deleteHandler,
-  } = props;
+  const {notifications, instances, deleteLoading, deleteHandler} = props;
   const [triggerOpenModal, setTriggerOpenModal] = useState(null);
-  const [editNotificationRedirect, setEditNotificationRedirect] = useState(null);
-  const parsedNotifications = notifications.map(el => ({
+  const [editNotificationRedirect, setEditNotificationRedirect] = useState(
+    null
+  );
+  const parsedNotifications = notifications.map((el) => ({
     ...el,
-    instance: instances.find(i => el.instanceId === i.id).name,
+    instance: instances.find((i) => el.instanceId === i.id).name,
     actionsMenu: el.isEditable
       ? [
-        {
-          label: 'Edit',
-          callback: () => {
-            setEditNotificationRedirect(el);
+          {
+            label: "Edit",
+            callback: () => {
+              setEditNotificationRedirect(el);
+            },
+            type: "info",
           },
-          type: 'info',
-        },
-        {
-          label: 'Delete',
-          callback: () => {
-            setTriggerOpenModal(el.id);
+          {
+            label: "Delete",
+            callback: () => {
+              setTriggerOpenModal(el.id);
+            },
+            type: "error",
           },
-          type: 'error',
-        },
-      ]
+        ]
       : undefined,
   }));
 
@@ -82,7 +82,7 @@ const NotificationManagePage = (props) => {
       <Redirect
         to={{
           pathname: `${LINK_PREFIX}/createNotification`,
-          state: { notification: editNotificationRedirect },
+          state: {notification: editNotificationRedirect},
         }}
       />
     );
@@ -98,12 +98,12 @@ const NotificationManagePage = (props) => {
               hideModal: context.hideModal,
               deleteHandler: () => deleteHandler(triggerOpenModal),
             },
-            { hasClose: false },
+            {hasClose: false}
           );
           setTriggerOpenModal(null);
         }
         return (
-          <Box style={{ width: '100%' }}>
+          <Box style={{width: "100%"}}>
             <Text isTitle type="primary">
               Manage Notifications
             </Text>

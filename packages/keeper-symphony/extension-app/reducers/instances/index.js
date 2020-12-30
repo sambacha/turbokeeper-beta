@@ -2,7 +2,7 @@ import {
   GET_INSTANCES,
   GET_INSTANCES_SUCCESS,
   GET_INSTANCES_FAILURE,
-} from './types';
+} from "./types";
 
 const INITIAL_STATE = {
   instances: null,
