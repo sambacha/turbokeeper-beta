@@ -1,6 +1,6 @@
 {
-  "name": "burn_registry",
-  "version": "1.0.0",
+  "name": "turbokeeper-burnRegistry",
+  "version": "1.1.0",
   "description": "",
   "main": "truffle-config.js",
   "directories": {
